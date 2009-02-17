@@ -64,10 +64,10 @@ public class AimParser implements Runnable{
 			tumorName = imageAnnotation.getName();			
 			User rater = imageAnnotation.getUser();
 			raterID = String.valueOf(rater.getUser().getId());
-			raterName = rater.getUser().getAuthorName();
+			raterName = rater.getUser().getName();
 			
 			//AIM INFO
-			String imageAnnotationType = imageAnnotation.getImageAnnotationType().value();			
+			String imageAnnotationType = imageAnnotation.getType().value();			
 			aimDesc.add(imageAnnotationType + " " + getTumorName());
 			aimDesc.add("Author " + raterName);
 			String anatomicRegion = imageAnnotation.getAnatomicEntityCollection().getAnatomicEntity().get(0).getCodeMeaning();
@@ -82,12 +82,12 @@ public class AimParser implements Runnable{
 				String str2 = imagingObservation.getImagingObservationCharacteristicCollection().getImagingObservationCharacteristic().get(0).getCodeMeaning();
 				aimDesc.add(str1 + ": " + str2);
 			}
-			ImageReference imageReference = imageAnnotation.getImageReferenceCollection().getImageReference().get(0);
+			ImageReference imageReference = imageAnnotation.getImageReferenceCollection().get(0).getImageReference().get(0);
 			DICOMImageReference ref = (DICOMImageReference) imageReference;
         	Study study = ref.getStudy().getStudy();	        		        		        	
         	Series series = study.getSeries().getSeries();
         	Image image = series.getImageCollection().getImage().get(0);
-        	refSOPInstanceUID = image.getSOPInstanceUID();  
+        	refSOPInstanceUID = image.getSopInstanceUID();  
         	        	
         	StringWriter sw = new StringWriter();
 			marshaller.marshal(obj, sw);

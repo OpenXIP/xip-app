@@ -55,7 +55,7 @@ public class AimSerializer {
 		JAXBElement obj = (JAXBElement)unmarshaller.unmarshal(input);	
 		ImageAnnotation imageAnnotation = ((ImageAnnotation)obj.getValue());
 		ImageAnnotationIdentifier type = ImageAnnotationIdentifier.RECIST_BASELINE_TARGET_LESION;			
-		imageAnnotation.setImageAnnotationType(type);
+		imageAnnotation.setType(type);
 		String outDir = recistMgr.getOutputDir();		
 		URI uri = null;
 		try {
