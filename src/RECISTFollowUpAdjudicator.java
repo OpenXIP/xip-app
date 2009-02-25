@@ -152,6 +152,8 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {										
 		List<Uuid> uuidsGroup1 = new ArrayList<Uuid>();
 		List<Uuid> uuidsGroup2 = new ArrayList<Uuid>();		
+		List<Uuid> uuidsGSPS = new ArrayList<Uuid>();		
+		List<Uuid> uuidsSR = new ArrayList<Uuid>();		
 		//Extract UUIDs for all dicom objects from both groups
 		List<Patient> patients = availableData.getPatients().getPatient();		
 		for(int i = 0; i < patients.size(); i++){
@@ -166,7 +168,15 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m = 0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
-						if(j == 0){							
+						String sopClassUID = desc.getClassUID().getUid();
+						String modality = desc.getModality().getModality();
+						if (sopClassUID.equalsIgnoreCase("1.2.840.10008.5.1.4.1.1.11.1")){
+							uuidsGSPS.add(desc.getUuid());
+						}else if (sopClassUID.equalsIgnoreCase("1.2.840.10008.5.1.4.1.1.88.59")){ //KOS
+							uuidsSR.add(desc.getUuid());
+						}else if(modality.equalsIgnoreCase("SR")){							
+							uuidsSR.add(desc.getUuid());
+						}else if(j == 0){							
 							uuidsGroup1.add(desc.getUuid());
 						}else if(j == 1){
 							uuidsGroup2.add(desc.getUuid());
@@ -232,7 +242,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 			appPanel.getIvCanvas().set("DicomExaminer2.viewAll", "");
 			//appPanel.getIvCanvas().processQueue();
 		}
-		appPanel.getIvCanvas().set("Lut1.bitsUsed", "16");
+		//appPanel.getIvCanvas().set("Lut1.bitsUsed", "16");
 		appPanel.getIvCanvas().set("DicomExaminer1.imageIndex", "1");
 		appPanel.getIvCanvas().set("DicomExaminer2.imageIndex", "1");
 		
