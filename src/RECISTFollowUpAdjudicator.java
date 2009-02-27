@@ -4,6 +4,7 @@
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -34,6 +35,7 @@ import org.nema.dicom.wg23.Uid;
 import org.nema.dicom.wg23.Uuid;
 
 import com.pixelmed.dicom.AttributeList;
+import com.pixelmed.dicom.StructuredReportBrowser;
 
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
@@ -187,7 +189,8 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 					}
 				}
 			}
-		}										
+		}
+		
 		//1. Determin DICOM dataset prev and current - use xpath to get series date
 		arrangeDicomDataSet(uuidsGroup1, uuidsGroup2);		
 		//2. Get ObjectLocators for all aim objects (aim objects need to be parsed by the application in order to determin
@@ -268,7 +271,21 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		outDir = getClientToHost().getOutputDir();
 		recistMgr.setOutputDir(outDir);
 		appPanel.setVisible(true);
-		appPanel.repaint();					
+		appPanel.repaint();	
+		
+		// Now for the SRs
+		List<ObjectLocator> listObjLocsSR = new ArrayList<ObjectLocator>();
+		if(uuidsSR.size() != 0){
+			ArrayOfUUID arraySR = new ArrayOfUUID();
+			List<Uuid> listUUIDsSR = arraySR.getUuid();
+			for(int i = 0; i < uuidsSR.size(); i++){
+				listUUIDsSR.add(uuidsSR.get(i));
+			}
+			ArrayOfObjectLocator objLocsCurr = getClientToHost().getDataAsFile(arraySR, true);
+			listObjLocsSR = objLocsCurr.getObjectLocator();
+		}					
+
+		
 	}	
 	
 	public boolean setState(State newState) {
@@ -405,29 +422,30 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	    st.nextToken();
 	    String tok = st.nextToken();
 	    return tok;	    
-	}	
-/*	public void displaySR(){
-		AttributeList list = new AttributeList();
+	}
+	
+	public void displaySR(List<ObjectLocator> listObjLocsSR){
 		
-		System.out.println("Found " + nolsGroupDicomKO.size() + "KONs and SRs");
-		for (int i = 0; i < nolsGroupDicomKO.size(); i++){
-			System.out.println(nolsGroupDicomKO.get(i).getURI());
-		}
+		System.out.println("Found " + listObjLocsSR.size() + "KONs and SRs");
 
 		try {
-			if (nolsGroupDicomKO.size() > 0){
-				String filePath;
+			if (listObjLocsSR.size() > 0){
+				for (int i = 0; i < listObjLocsSR.size(); i++) {
+					AttributeList list = new AttributeList();
+					String filePath;
+					URI filePathUri = new URI(listObjLocsSR.get(i).getUri());
+					filePath = filePathUri.getSchemeSpecificPart();
+					//filePath = filePath.substring(6 , filePath.length());
+					System.out.println(filePath);
+					list.read(filePath,null,true,true);
+					StructuredReportBrowser tree = new StructuredReportBrowser(list);
+					//DisplayStructuredReportBrowser tree = new DisplayStructuredReportBrowser(list,fileMap,512,512);
+					tree.setVisible(true);
+				}
 				
-				filePath = new File(nolsGroupDicomKO.get(0).getURI()).getPath();
-				filePath = filePath.substring(6 , filePath.length());
-				System.out.println(filePath);
-				list.read(filePath,null,true,true);
-				StructuredReportBrowser tree = new StructuredReportBrowser(list);
-				//DisplayStructuredReportBrowser tree = new DisplayStructuredReportBrowser(list,fileMap,512,512);
-				tree.setVisible(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();			
 		}
-	}*/
+	}
 }
