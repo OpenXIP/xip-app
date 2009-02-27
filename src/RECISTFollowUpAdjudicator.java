@@ -32,6 +32,9 @@ import org.nema.dicom.wg23.State;
 import org.nema.dicom.wg23.Study;
 import org.nema.dicom.wg23.Uid;
 import org.nema.dicom.wg23.Uuid;
+
+import com.pixelmed.dicom.AttributeList;
+
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.application.WG23Application;
@@ -403,4 +406,28 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	    String tok = st.nextToken();
 	    return tok;	    
 	}	
+/*	public void displaySR(){
+		AttributeList list = new AttributeList();
+		
+		System.out.println("Found " + nolsGroupDicomKO.size() + "KONs and SRs");
+		for (int i = 0; i < nolsGroupDicomKO.size(); i++){
+			System.out.println(nolsGroupDicomKO.get(i).getURI());
+		}
+
+		try {
+			if (nolsGroupDicomKO.size() > 0){
+				String filePath;
+				
+				filePath = new File(nolsGroupDicomKO.get(0).getURI()).getPath();
+				filePath = filePath.substring(6 , filePath.length());
+				System.out.println(filePath);
+				list.read(filePath,null,true,true);
+				StructuredReportBrowser tree = new StructuredReportBrowser(list);
+				//DisplayStructuredReportBrowser tree = new DisplayStructuredReportBrowser(list,fileMap,512,512);
+				tree.setVisible(true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+	}*/
 }
