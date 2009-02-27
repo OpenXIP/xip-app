@@ -5,7 +5,7 @@ DEF SeparatorRenderWindow Separator {
 	PackedColor {
 	    orderedRGBA	0
 	}
-	DEF SOPInstanceList1 Text2 {
+	DEF ZPos1 Text2 {
 	    string	[  ] =
 		SoXipGetDicomString {
 		    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
@@ -14,13 +14,29 @@ DEF SeparatorRenderWindow Separator {
 			    inputs [ SoXipMFDataDicom input ]
 			    input	[  ] =
 				DEF LoadDicom1 SoXipLoadDicom {
-				    inputs [  ]
+				    inputs [ MFString name ]
+				    name	"C:\XIP\xip-reference-impl\XIP\dicom-dataset-demo"
 				    outputs [ SoXipMFDataDicom dicom ]
 				}
 				. dicom
 
 			    outputs [ SoXipMFDataDicom output ]
 			}
+			. output
+
+		    group	0x20
+		    element	0x1041
+		    outputs [ MFString string ]
+		}
+		. string
+
+	}
+	DEF SOPInstanceList1 Text2 {
+	    string	[  ] =
+		SoXipGetDicomString {
+		    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
+		    dicom	[  ] =
+			USE SortDicom1+0
 			. output
 
 		    group	0x8
@@ -30,22 +46,768 @@ DEF SeparatorRenderWindow Separator {
 		. string
 
 	}
-	DEF SOPInstanceList2 Text2 {
-	    string	[  ] =
+	DEF ZPos2 Text2 {
+	    string	[ "-390.410004",
+			      "-385.410004",
+			      "-380.410004",
+			      "-375.410004",
+			      "-370.410004",
+			      "-365.410004",
+			      "-362.640015",
+			      "-360.410004",
+			      "-357.640015",
+			      "-355.410004",
+			      "-352.640015",
+			      "-350.410004",
+			      "-347.640015",
+			      "-345.410004",
+			      "-342.640015",
+			      "-340.410004",
+			      "-337.640015",
+			      "-335.410004",
+			      "-332.640015",
+			      "-330.410004",
+			      "-327.640015",
+			      "-325.410004",
+			      "-322.640015",
+			      "-320.410004",
+			      "-317.640015",
+			      "-315.410004",
+			      "-312.640015",
+			      "-310.410004",
+			      "-307.640015",
+			      "-305.410004",
+			      "-302.640015",
+			      "-300.410004",
+			      "-297.640015",
+			      "-295.410004",
+			      "-292.640015",
+			      "-290.410004",
+			      "-287.640015",
+			      "-285.410004",
+			      "-282.640015",
+			      "-280.410004",
+			      "-277.640015",
+			      "-275.410004",
+			      "-272.640015",
+			      "-270.410004",
+			      "-267.640015",
+			      "-265.410004",
+			      "-262.640015",
+			      "-260.410004",
+			      "-257.640015",
+			      "-255.410004",
+			      "-252.639999",
+			      "-250.410004",
+			      "-247.639999",
+			      "-245.410004",
+			      "-242.639999",
+			      "-240.410004",
+			      "-237.639999",
+			      "-235.410004",
+			      "-232.639999",
+			      "-230.410004",
+			      "-227.639999",
+			      "-225.410004",
+			      "-222.639999",
+			      "-220.410004",
+			      "-217.639999",
+			      "-215.410004",
+			      "-212.639999",
+			      "-210.410004",
+			      "-207.639999",
+			      "-205.410004",
+			      "-202.639999",
+			      "-200.410004",
+			      "-197.639999",
+			      "-195.410004",
+			      "-192.639999",
+			      "-190.410004",
+			      "-187.639999",
+			      "-185.410004",
+			      "-182.639999",
+			      "-180.410004",
+			      "-177.639999",
+			      "-175.410004",
+			      "-172.639999",
+			      "-170.410004",
+			      "-167.639999",
+			      "-165.410004",
+			      "-162.639999",
+			      "-160.410004",
+			      "-157.639999",
+			      "-155.410004",
+			      "-152.639999",
+			      "-150.410004",
+			      "-147.639999",
+			      "-145.410004",
+			      "-142.639999",
+			      "-140.410004",
+			      "-137.639999",
+			      "-135.410004",
+			      "-132.639999",
+			      "-130.410004",
+			      "-127.639999",
+			      "-125.410004",
+			      "-122.639999",
+			      "-120.410004",
+			      "-117.639999",
+			      "-115.410004",
+			      "-112.639999",
+			      "-110.410004",
+			      "-107.639999",
+			      "-105.410004",
+			      "-102.639999",
+			      "-100.410004",
+			      "-97.639999",
+			      "-95.410004",
+			      "-92.639999",
+			      "-90.410004",
+			      "-87.639999",
+			      "-85.410004",
+			      "-82.639999",
+			      "-80.410004",
+			      "-77.639999",
+			      "-75.410004",
+			      "-72.639999",
+			      "-70.410004",
+			      "-67.639999",
+			      "-65.410004",
+			      "-62.639999",
+			      "-60.410000",
+			      "-57.639999",
+			      "-55.410000",
+			      "-52.639999",
+			      "-50.410000",
+			      "-47.639999",
+			      "-45.410000",
+			      "-42.639999",
+			      "-40.410000",
+			      "-37.639999",
+			      "-35.410000",
+			      "-32.639999",
+			      "-30.410000",
+			      "-27.639999",
+			      "-25.410000",
+			      "-22.639999",
+			      "-20.410000",
+			      "-17.639999",
+			      "-15.410000",
+			      "-10.410000" ] =
 		SoXipGetDicomString {
 		    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
-		    dicom	[  ] =
+		    dicom	[ "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA" ] =
 			DEF SortDicom2+1 SoXipSortDicom {
 			    inputs [ SoXipMFDataDicom input ]
-			    input	[  ] =
+			    input	[ "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA",
+					      "DATA" ] =
 				DEF LoadDicom2 SoXipLoadDicom {
-				    inputs [  ]
+				    inputs [ MFString name ]
+				    name	"D:\XIP\RECIST_Data"
 				    outputs [ SoXipMFDataDicom dicom ]
 				}
 				. dicom
 
 			    outputs [ SoXipMFDataDicom output ]
 			}
+			. output
+
+		    group	0x20
+		    element	0x1041
+		    outputs [ MFString string ]
+		}
+		. string
+
+	}
+	DEF SOPInstanceList2 Text2 {
+	    string	[ "1.3.6.1.4.1.9328.50.1.10932",
+			      "1.3.6.1.4.1.9328.50.1.10931",
+			      "1.3.6.1.4.1.9328.50.1.10930",
+			      "1.3.6.1.4.1.9328.50.1.10929",
+			      "1.3.6.1.4.1.9328.50.1.10928",
+			      "1.3.6.1.4.1.9328.50.1.10927",
+			      "1.3.6.1.4.1.9328.50.1.10787",
+			      "1.3.6.1.4.1.9328.50.1.10926",
+			      "1.3.6.1.4.1.9328.50.1.10786",
+			      "1.3.6.1.4.1.9328.50.1.10925",
+			      "1.3.6.1.4.1.9328.50.1.10785",
+			      "1.3.6.1.4.1.9328.50.1.10924",
+			      "1.3.6.1.4.1.9328.50.1.10784",
+			      "1.3.6.1.4.1.9328.50.1.10923",
+			      "1.3.6.1.4.1.9328.50.1.10783",
+			      "1.3.6.1.4.1.9328.50.1.10922",
+			      "1.3.6.1.4.1.9328.50.1.10782",
+			      "1.3.6.1.4.1.9328.50.1.10921",
+			      "1.3.6.1.4.1.9328.50.1.10781",
+			      "1.3.6.1.4.1.9328.50.1.10920",
+			      "1.3.6.1.4.1.9328.50.1.10780",
+			      "1.3.6.1.4.1.9328.50.1.10919",
+			      "1.3.6.1.4.1.9328.50.1.10779",
+			      "1.3.6.1.4.1.9328.50.1.10918",
+			      "1.3.6.1.4.1.9328.50.1.10778",
+			      "1.3.6.1.4.1.9328.50.1.10917",
+			      "1.3.6.1.4.1.9328.50.1.10777",
+			      "1.3.6.1.4.1.9328.50.1.10916",
+			      "1.3.6.1.4.1.9328.50.1.10776",
+			      "1.3.6.1.4.1.9328.50.1.10915",
+			      "1.3.6.1.4.1.9328.50.1.10775",
+			      "1.3.6.1.4.1.9328.50.1.10914",
+			      "1.3.6.1.4.1.9328.50.1.10774",
+			      "1.3.6.1.4.1.9328.50.1.10913",
+			      "1.3.6.1.4.1.9328.50.1.10773",
+			      "1.3.6.1.4.1.9328.50.1.10912",
+			      "1.3.6.1.4.1.9328.50.1.10772",
+			      "1.3.6.1.4.1.9328.50.1.10911",
+			      "1.3.6.1.4.1.9328.50.1.10771",
+			      "1.3.6.1.4.1.9328.50.1.10910",
+			      "1.3.6.1.4.1.9328.50.1.10770",
+			      "1.3.6.1.4.1.9328.50.1.10909",
+			      "1.3.6.1.4.1.9328.50.1.10769",
+			      "1.3.6.1.4.1.9328.50.1.10908",
+			      "1.3.6.1.4.1.9328.50.1.10768",
+			      "1.3.6.1.4.1.9328.50.1.10907",
+			      "1.3.6.1.4.1.9328.50.1.10767",
+			      "1.3.6.1.4.1.9328.50.1.10906",
+			      "1.3.6.1.4.1.9328.50.1.10766",
+			      "1.3.6.1.4.1.9328.50.1.10905",
+			      "1.3.6.1.4.1.9328.50.1.10765",
+			      "1.3.6.1.4.1.9328.50.1.10904",
+			      "1.3.6.1.4.1.9328.50.1.10764",
+			      "1.3.6.1.4.1.9328.50.1.10903",
+			      "1.3.6.1.4.1.9328.50.1.10763",
+			      "1.3.6.1.4.1.9328.50.1.10902",
+			      "1.3.6.1.4.1.9328.50.1.10762",
+			      "1.3.6.1.4.1.9328.50.1.39827",
+			      "1.3.6.1.4.1.9328.50.1.10761",
+			      "1.3.6.1.4.1.9328.50.1.10901",
+			      "1.3.6.1.4.1.9328.50.1.10760",
+			      "1.3.6.1.4.1.9328.50.1.10900",
+			      "1.3.6.1.4.1.9328.50.1.10759",
+			      "1.3.6.1.4.1.9328.50.1.10899",
+			      "1.3.6.1.4.1.9328.50.1.10758",
+			      "1.3.6.1.4.1.9328.50.1.10898",
+			      "1.3.6.1.4.1.9328.50.1.10757",
+			      "1.3.6.1.4.1.9328.50.1.10897",
+			      "1.3.6.1.4.1.9328.50.1.10756",
+			      "1.3.6.1.4.1.9328.50.1.10896",
+			      "1.3.6.1.4.1.9328.50.1.10755",
+			      "1.3.6.1.4.1.9328.50.1.10895",
+			      "1.3.6.1.4.1.9328.50.1.10754",
+			      "1.3.6.1.4.1.9328.50.1.10894",
+			      "1.3.6.1.4.1.9328.50.1.10753",
+			      "1.3.6.1.4.1.9328.50.1.10893",
+			      "1.3.6.1.4.1.9328.50.1.10731",
+			      "1.3.6.1.4.1.9328.50.1.10892",
+			      "1.3.6.1.4.1.9328.50.1.10730",
+			      "1.3.6.1.4.1.9328.50.1.10891",
+			      "1.3.6.1.4.1.9328.50.1.10729",
+			      "1.3.6.1.4.1.9328.50.1.10890",
+			      "1.3.6.1.4.1.9328.50.1.10728",
+			      "1.3.6.1.4.1.9328.50.1.10889",
+			      "1.3.6.1.4.1.9328.50.1.10727",
+			      "1.3.6.1.4.1.9328.50.1.10888",
+			      "1.3.6.1.4.1.9328.50.1.10726",
+			      "1.3.6.1.4.1.9328.50.1.10887",
+			      "1.3.6.1.4.1.9328.50.1.10725",
+			      "1.3.6.1.4.1.9328.50.1.10886",
+			      "1.3.6.1.4.1.9328.50.1.10724",
+			      "1.3.6.1.4.1.9328.50.1.10885",
+			      "1.3.6.1.4.1.9328.50.1.10723",
+			      "1.3.6.1.4.1.9328.50.1.10884",
+			      "1.3.6.1.4.1.9328.50.1.10722",
+			      "1.3.6.1.4.1.9328.50.1.10883",
+			      "1.3.6.1.4.1.9328.50.1.10721",
+			      "1.3.6.1.4.1.9328.50.1.10882",
+			      "1.3.6.1.4.1.9328.50.1.10720",
+			      "1.3.6.1.4.1.9328.50.1.10881",
+			      "1.3.6.1.4.1.9328.50.1.10719",
+			      "1.3.6.1.4.1.9328.50.1.10880",
+			      "1.3.6.1.4.1.9328.50.1.10718",
+			      "1.3.6.1.4.1.9328.50.1.10879",
+			      "1.3.6.1.4.1.9328.50.1.10717",
+			      "1.3.6.1.4.1.9328.50.1.10878",
+			      "1.3.6.1.4.1.9328.50.1.10716",
+			      "1.3.6.1.4.1.9328.50.1.10877",
+			      "1.3.6.1.4.1.9328.50.1.10715",
+			      "1.3.6.1.4.1.9328.50.1.10876",
+			      "1.3.6.1.4.1.9328.50.1.10714",
+			      "1.3.6.1.4.1.9328.50.1.10875",
+			      "1.3.6.1.4.1.9328.50.1.10713",
+			      "1.3.6.1.4.1.9328.50.1.10874",
+			      "1.3.6.1.4.1.9328.50.1.10712",
+			      "1.3.6.1.4.1.9328.50.1.10873",
+			      "1.3.6.1.4.1.9328.50.1.10711",
+			      "1.3.6.1.4.1.9328.50.1.10872",
+			      "1.3.6.1.4.1.9328.50.1.10710",
+			      "1.3.6.1.4.1.9328.50.1.10871",
+			      "1.3.6.1.4.1.9328.50.1.10709",
+			      "1.3.6.1.4.1.9328.50.1.10870",
+			      "1.3.6.1.4.1.9328.50.1.10708",
+			      "1.3.6.1.4.1.9328.50.1.10869",
+			      "1.3.6.1.4.1.9328.50.1.10707",
+			      "1.3.6.1.4.1.9328.50.1.10868",
+			      "1.3.6.1.4.1.9328.50.1.10706",
+			      "1.3.6.1.4.1.9328.50.1.10867",
+			      "1.3.6.1.4.1.9328.50.1.10705",
+			      "1.3.6.1.4.1.9328.50.1.10866",
+			      "1.3.6.1.4.1.9328.50.1.10704",
+			      "1.3.6.1.4.1.9328.50.1.10865",
+			      "1.3.6.1.4.1.9328.50.1.10703",
+			      "1.3.6.1.4.1.9328.50.1.10864",
+			      "1.3.6.1.4.1.9328.50.1.10702",
+			      "1.3.6.1.4.1.9328.50.1.10863",
+			      "1.3.6.1.4.1.9328.50.1.10701",
+			      "1.3.6.1.4.1.9328.50.1.10862",
+			      "1.3.6.1.4.1.9328.50.1.10700",
+			      "1.3.6.1.4.1.9328.50.1.10861",
+			      "1.3.6.1.4.1.9328.50.1.10699",
+			      "1.3.6.1.4.1.9328.50.1.10860",
+			      "1.3.6.1.4.1.9328.50.1.10698",
+			      "1.3.6.1.4.1.9328.50.1.10859",
+			      "1.3.6.1.4.1.9328.50.1.10696",
+			      "1.3.6.1.4.1.9328.50.1.10858",
+			      "1.3.6.1.4.1.9328.50.1.10856" ] =
+		SoXipGetDicomString {
+		    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
+		    dicom	[ "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA",
+				      "DATA" ] =
+			USE SortDicom2+1
 			. output
 
 		    group	0x8
@@ -68,7 +830,7 @@ DEF SeparatorRenderWindow Separator {
 	model	BASE_COLOR
     }
     DEF ViewportGroup SoXipViewportGroup {
-	fields [ MFVec4f viewports, SFInt32 current ]
+	fields [ MFVec4f viewports, SFInt32 current,  ]
 	viewports	[ 0 0 0.5 1,
 			  0.5 0 0.5 1 ]
 	current	1
@@ -106,7 +868,7 @@ DEF SeparatorRenderWindow Separator {
 	    DEF Lut1 SoXipLut {
 		fields [ SFEnum inputMode, SFEnum fileMode, SFEnum outputMode, SFShort bitsUsed,
 			SFFloat rampWidth, SFFloat rampCenter, SFFloat slopeCenter, SFInt32 fileEntries,
-			MFColor arrayColor, MFFloat arrayAlpha ]
+			MFColor arrayColor, MFFloat arrayAlpha,  ]
 		inputMode	TRAPEZOID
 		fileMode	BYTE_COMMA
 		outputMode	LUMINANCE
@@ -132,28 +894,174 @@ DEF SeparatorRenderWindow Separator {
 	    }
 	    DEF DicomExaminer1+7 SoXipDicomExaminer {
 		fields [ SoXipMFDataDicom images, SFShort imageIndex, SFTrigger previousImage, SFTrigger nextImage,
-			SFShort sliceIndex, SFFloat viewAllScale, SFEnum mode ]
+			SFShort sliceIndex, SFFloat viewAllScale, SFEnum mode,  ]
 		images	[  ] =
 		    USE SortDicom1+0
 		    . output
 
 		imageIndex	-1 =
 		    DEF LockCalculatorba+8 Calculator {
-			a	-1 =
+			a	0 =
 			    DEF DicomExaminer2+9 SoXipDicomExaminer {
 				fields [ SoXipMFDataDicom images, SFShort imageIndex, SFTrigger previousImage, SFTrigger nextImage,
-					SFShort sliceIndex, SFFloat viewAllScale, SFEnum mode ]
-				images	[  ] =
+					SFShort sliceIndex, SFFloat viewAllScale, SFEnum mode, SFPlane planeSlice ]
+				images	[ "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA",
+						  "DATA" ] =
 				    USE SortDicom2+1
 				    . output
 
-				imageIndex	-1 =
+				imageIndex	0 =
 				    DEF LockCalculatorab+10 Calculator {
 					a	-1 =
 					    USE DicomExaminer1+7
 					    . imageIndex
 
-					b	-1 =
+					b	0 =
 					    USE LockCalculatorba+8
 					    . a
 
@@ -164,13 +1072,13 @@ DEF SeparatorRenderWindow Separator {
 						    USE LockModeToggle+2
 						    . toggle
 
-						input	0 =
+						input	-1 =
 						    DEF CalcLockOffset Calculator {
 							a	-1 =
 							    USE DicomExaminer1+7
 							    . imageIndex
 
-							b	-1 =
+							b	0 =
 							    USE DicomExaminer2+9
 							    . imageIndex
 
@@ -206,7 +1114,7 @@ DEF SeparatorRenderWindow Separator {
 				    USE +12
 				    . next
 
-				sliceIndex	-1
+				sliceIndex	0
 				viewAllScale	1
 				mode	SHIFT =
 				    DEF SelectMode2 SelectOne {
@@ -218,6 +1126,7 @@ DEF SeparatorRenderWindow Separator {
 				    }
 				    . output
 
+				planeSlice	0 0 1  -390.41
 			    }
 			    . imageIndex
 
@@ -225,7 +1134,7 @@ DEF SeparatorRenderWindow Separator {
 			    USE LockCalculatorab+10
 			    . a
 
-			c	0 =
+			c	-1 =
 			    USE +11
 			    . output
 
@@ -479,48 +1388,40 @@ DEF SeparatorRenderWindow Separator {
 	DEF Separator2 Separator {
 	    DEF WindowLevelManip2+17 SoXipWindowLevelManip {
 		fields [ SFFloat window, SFFloat level, SFBool handleComplexity ]
-		window	1400 =
-		    DEF CalculatorWinLevInput2+18 Calculator {
-			a	1400
-			b	40
-			c	2
-			d	0 =
-			    DEF GetDicomAttr2+19 SoXipImageAttributes {
-				inputs [ SoXipSFDataImage image ]
-				image	"NULL" =
-				    USE SortDicom2+1
-				    . output
+		window	0.00610352 =
+		    DEF +18 SoXipDicomWindowLevel {
+			inputs [ SoXipSFDataDicom input ]
+			input	"DATA" =
+			    USE SortDicom2+1
+			    . output
 
-				outputs [ SFMatrix modelMatrix, SFShort width, SFShort height, SFShort depth,
-					SFShort bitsStored, SFMatrix defaultOrientation, SFShort orthoScanOrientation, SFMatrix orthoOrientation1,
-					SFMatrix orthoOrientation2, SFMatrix orthoOrientation3, SFVec3f defaultCenter ]
-			    }
-			    . bitsStored
-
-			expression	"oa=(a/pow(c, d)) ; ob = ((b+1024)/pow(c, d))"
+			outputs [ SFFloat window, SFFloat level, SFShort bitsStored, SFColor colorBottom,
+				SFColor colorTop ]
 		    }
-		    . oa
+		    . window
 
-		level	1064 =
-		    USE CalculatorWinLevInput2+18
-		    . ob
+		level	0.516235 =
+		    USE +18
+		    . level
 
 		handleComplexity	TRUE
 	    }
 	    DEF Lut2 SoXipLut {
-		fields [ SFEnum inputMode, SFEnum outputMode, SFShort bitsUsed, SFFloat rampWidth,
-			SFFloat rampCenter, SFFloat slopeCenter, MFColor arrayColor, MFFloat arrayAlpha ]
+		fields [ SoXipSFDataImage LUTDataImage, SFEnum inputMode, SFEnum outputMode, SFShort bitsUsed,
+			SFFloat rampWidth, SFFloat rampCenter, SFFloat slopeCenter, MFColor arrayColor,
+			MFFloat arrayAlpha,  ]
+		LUTDataImage	"DATA"
 		inputMode	TRAPEZOID
 		outputMode	LUMINANCE
-		bitsUsed	0 =
-		    USE GetDicomAttr2+19
+		bitsUsed	16 =
+		    USE +18
 		    . bitsStored
 
-		rampWidth	1400 =
+		rampWidth	0.00610352 =
 		    USE WindowLevelManip2+17
 		    . window
 
-		rampCenter	1064 =
+		rampCenter	0.516235 =
 		    USE WindowLevelManip2+17
 		    . level
 
@@ -530,8 +1431,9 @@ DEF SeparatorRenderWindow Separator {
 	    }
 	    USE +12
 	    USE DicomExaminer2+9
-	    DEF GetDicom2+20 SoXipGetDicom {
+	    DEF GetDicom2+19 SoXipGetDicom {
 		fields [ SoXipSFDataDicom image ]
+		image	"DATA"
 	    }
 	    DEF SeparatorOverlay2 Separator {
 		Group {
@@ -562,7 +1464,7 @@ DEF SeparatorRenderWindow Separator {
 		DEF OverlayManips2 SoXipOverlayManips {
 		    fields [ SFShort numNodesUpToContainer, SFBool multipleSelection, SFBool enableSelection ]
 		}
-		DEF OverlayManager2+21 SoXipOverlayManager {
+		DEF OverlayManager2+20 SoXipOverlayManager {
 		    fields [ SFString shapeClassName, MFString shapeLabel, MFNode overlays,  ]
 		    shapeClassName	"SoXipLineMeasurement"
 		    shapeLabel	""
@@ -574,11 +1476,11 @@ DEF SeparatorRenderWindow Separator {
 			. overlays
 
 		}
-		DEF OverlaySearch2+22 SoXipOverlaySearch {
+		DEF OverlaySearch2+21 SoXipOverlaySearch {
 		    fields [ MFString label, SFString type, MFNode overlays,  ]
 		    label	""
 		    type	"SoXipLineMeasurement" =
-			USE OverlayManager2+21
+			USE OverlayManager2+20
 			. shapeClassName
 
 		    overlays	[  ]
@@ -588,7 +1490,7 @@ DEF SeparatorRenderWindow Separator {
 			DEF SaveOverlay2 SoXipSaveOverlay {
 			    inputs [ MFNode overlays,  ]
 			    overlays	[  ] =
-				USE OverlaySearch2+22
+				USE OverlaySearch2+21
 				. overlays
 
 			    outputs [ SFString status ]
@@ -629,7 +1531,7 @@ DEF SeparatorRenderWindow Separator {
 			}
 			SoXipText2 {
 			    fields [ SFString string, SFEnum vAlignment ]
-			    string	"-1" =
+			    string	"0" =
 				USE DicomExaminer2+9
 				. imageIndex
 
@@ -654,11 +1556,11 @@ DEF SeparatorRenderWindow Separator {
 			}
 			SoXipText2 {
 			    fields [ SFString string, SFEnum vAlignment ]
-			    string	"" =
+			    string	"-390.410004" =
 				SoXipGetDicomString {
 				    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
-				    dicom	"NULL" =
-					USE GetDicom2+20
+				    dicom	"DATA" =
+					USE GetDicom2+19
 					. image
 
 				    group	0x20
@@ -688,19 +1590,19 @@ DEF SeparatorRenderWindow Separator {
 			}
 			SoXipText2 {
 			    fields [ SFString string, SFEnum vAlignment ]
-			    string	"1400" =
-				DEF CalcWinLevOut2+23 Calculator {
-				    a	1400 =
+			    string	"400" =
+				DEF CalcWinLevOut2+22 Calculator {
+				    a	0.00610352 =
 					USE WindowLevelManip2+17
 					. window
 
-				    b	1064 =
+				    b	0.516235 =
 					USE WindowLevelManip2+17
 					. level
 
 				    c	2
-				    d	0 =
-					USE GetDicomAttr2+19
+				    d	16 =
+					USE +18
 					. bitsStored
 
 				    expression	"oa=(a*pow(c, d)) ; ob=(b*pow(c, d))-1024"
@@ -728,8 +1630,8 @@ DEF SeparatorRenderWindow Separator {
 			}
 			SoXipText2 {
 			    fields [ SFString string, SFEnum vAlignment ]
-			    string	"40" =
-				USE CalcWinLevOut2+23
+			    string	"32808" =
+				USE CalcWinLevOut2+22
 				. ob
 
 			    vAlignment	BOTTOM
