@@ -284,7 +284,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 			ArrayOfObjectLocator objLocsCurr = getClientToHost().getDataAsFile(arraySR, true);
 			listObjLocsSR = objLocsCurr.getObjectLocator();
 		}					
-
+		displaySR(listObjLocsSR);
 		
 	}	
 	
