@@ -6,6 +6,7 @@ package edu.wustl.xipApplication.aim;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.DICOMImageReference;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.Image;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageAnnotation;
+import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageAnnotationIdentifier;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageReference;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImagingObservation;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.Series;
@@ -46,8 +47,7 @@ public class AimParser implements Runnable{
 		unmarshall(aimFile);
 		notifyAimParsed();
 	}	
-	
-	
+		
 	String tumorID;
 	String tumorName;
 	String raterID;
@@ -64,10 +64,10 @@ public class AimParser implements Runnable{
 			tumorName = imageAnnotation.getName();			
 			User rater = imageAnnotation.getUser();
 			raterID = String.valueOf(rater.getUser().getId());
-			raterName = rater.getUser().getName();
+			raterName = rater.getUser().getAuthorName();
 			
 			//AIM INFO
-			String imageAnnotationType = imageAnnotation.getType().value();			
+			String imageAnnotationType = imageAnnotation.getImageAnnotationType().value();			
 			aimDesc.add(imageAnnotationType + " " + getTumorName());
 			aimDesc.add("Author " + raterName);
 			String anatomicRegion = imageAnnotation.getAnatomicEntityCollection().getAnatomicEntity().get(0).getCodeMeaning();
@@ -82,12 +82,12 @@ public class AimParser implements Runnable{
 				String str2 = imagingObservation.getImagingObservationCharacteristicCollection().getImagingObservationCharacteristic().get(0).getCodeMeaning();
 				aimDesc.add(str1 + ": " + str2);
 			}
-			ImageReference imageReference = imageAnnotation.getImageReferenceCollection().get(0).getImageReference().get(0);
+			ImageReference imageReference = imageAnnotation.getImageReferenceCollection().getImageReference().get(0);
 			DICOMImageReference ref = (DICOMImageReference) imageReference;
         	Study study = ref.getStudy().getStudy();	        		        		        	
         	Series series = study.getSeries().getSeries();
         	Image image = series.getImageCollection().getImage().get(0);
-        	refSOPInstanceUID = image.getSopInstanceUID();  
+        	refSOPInstanceUID = image.getSOPInstanceUID();  
         	        	
         	StringWriter sw = new StringWriter();
 			marshaller.marshal(obj, sw);

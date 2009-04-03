@@ -61,7 +61,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	RECISTManager recistMgr;	
 	
 	public RECISTFollowUpAdjudicator(URL hostURL, URL appURL) {
-		super(hostURL, appURL);				
+		super(hostURL, appURL);			
 		appPanel.setVisible(false);
 		appPanel.getAIMPanel().addOutputAvailableListener(this);
 		frame.getDisplayPanel().add(appPanel);
