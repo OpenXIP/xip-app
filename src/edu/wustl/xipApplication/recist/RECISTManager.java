@@ -18,7 +18,5 @@ public interface RECISTManager {
 	public abstract List<File> getAIMPrevious();
 	public abstract List<File> getAIMCurrent();
 	public abstract void setOutputDir(String outputDir);
-	public abstract String getOutputDir();
-	public abstract void setOutputData(WG23DataModel wg23DM);
-	public abstract WG23DataModel getOutputData();
+	public abstract String getOutputDir();	
 }

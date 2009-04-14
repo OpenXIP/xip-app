@@ -15,7 +15,6 @@ import org.nema.dicom.wg23.ObjectLocator;
 import edu.wustl.xipApplication.aim.AimParser;
 import edu.wustl.xipApplication.aim.AimParseEvent;
 import edu.wustl.xipApplication.aim.AimParseListener;
-import edu.wustl.xipApplication.wg23.WG23DataModel;
 
 /**
  * @author Jaroslaw Krych
@@ -150,15 +149,5 @@ public class RECISTManagerImpl implements RECISTManager, AimParseListener {
 	String outputDir;
 	public void setOutputDir(String outputDir) {
 		this.outputDir = outputDir;		
-	}
-
-
-	public WG23DataModel getOutputData() {		
-		return wg23DM;
-	}
-
-	WG23DataModel wg23DM;
-	public void setOutputData(WG23DataModel wg23DM) {
-		this.wg23DM = wg23DM;		
 	}
 }

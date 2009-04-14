@@ -33,10 +33,11 @@ import org.nema.dicom.wg23.State;
 import org.nema.dicom.wg23.Study;
 import org.nema.dicom.wg23.Uid;
 import org.nema.dicom.wg23.Uuid;
-
 import com.pixelmed.dicom.AttributeList;
 import com.pixelmed.dicom.StructuredReportBrowser;
 
+import edu.wustl.xipApplication.application.ApplicationDataManager;
+import edu.wustl.xipApplication.application.ApplicationDataManagerFactory;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.application.WG23Application;
@@ -58,7 +59,8 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	
 	String outDir;
 	State appCurrentState;		
-	RECISTManager recistMgr;	
+	RECISTManager recistMgr;
+	ApplicationDataManager dataMgr;
 	
 	public RECISTFollowUpAdjudicator(URL hostURL, URL appURL) {
 		super(hostURL, appURL);			
@@ -70,6 +72,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		Rectangle rect = getClientToHost().getAvailableScreen(null);			
 		frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());
 		recistMgr = RECISTFactory.getInstance();
+		dataMgr = ApplicationDataManagerFactory.getInstance();
 		/*Notify Host application was launched*/							
 		ApplicationImpl appImpl = new ApplicationImpl();
 		appImpl.addWG23Listener(this);
@@ -410,7 +413,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	public void outputAvailable(OutputAvailableEvent e) {
 		List<File> output = (List<File>)e.getSource();
 		WG23DataModel wg23DM = new WG23DataModelImpl(output);		
-		recistMgr.setOutputData(wg23DM);
+		dataMgr.setOutputData(wg23DM);
 		AvailableData availableData = wg23DM.getAvailableData();
 		getClientToHost().notifyDataAvailable(availableData, true);		
 	}

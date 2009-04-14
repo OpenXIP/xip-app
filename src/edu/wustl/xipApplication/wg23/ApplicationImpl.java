@@ -17,9 +17,8 @@ import org.nema.dicom.wg23.ObjectLocator;
 import org.nema.dicom.wg23.State;
 import org.nema.dicom.wg23.Uid;
 import org.nema.dicom.wg23.Uuid;
-
-import edu.wustl.xipApplication.recist.RECISTFactory;
-import edu.wustl.xipApplication.recist.RECISTManager;
+import edu.wustl.xipApplication.application.ApplicationDataManager;
+import edu.wustl.xipApplication.application.ApplicationDataManagerFactory;
 import edu.wustl.xipApplication.wg23.WG23Listener;
 
 
@@ -44,9 +43,9 @@ public class ApplicationImpl implements Application {
 	}	
 
 	public ArrayOfObjectLocator getDataAsFile(ArrayOfUUID uuids, boolean includeBulkData) {
-		ArrayOfObjectLocator arrayObjLoc = new ArrayOfObjectLocator();		
-		RECISTManager recistMgr = RECISTFactory.getInstance();
-		ObjectLocator[] objLocs = recistMgr.getOutputData().getObjectLocators();		
+		ArrayOfObjectLocator arrayObjLoc = new ArrayOfObjectLocator();					
+		ApplicationDataManager dataMgr = ApplicationDataManagerFactory.getInstance();
+		ObjectLocator[] objLocs = dataMgr.getOutputData().getObjectLocators();
 		if(uuids == null){			
 			return arrayObjLoc;
 		}
