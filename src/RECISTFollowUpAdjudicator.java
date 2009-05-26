@@ -3,6 +3,7 @@
  */
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
@@ -54,8 +57,7 @@ import edu.wustl.xipApplication.wg23.WG23Listener;
 
 
 public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Listener, OutputAvailableListener{		
-	ApplicationFrameTempl frame = new ApplicationFrameTempl();			
-	RECISTFollowUpAdjudicatorPanel appPanel = new RECISTFollowUpAdjudicatorPanel();
+	RECISTFollowUpAdjudicatorFrame frame = null;			
 	
 	String outDir;
 	State appCurrentState;		
@@ -64,20 +66,55 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	
 	public RECISTFollowUpAdjudicator(URL hostURL, URL appURL) {
 		super(hostURL, appURL);			
-		appPanel.setVisible(false);
-		appPanel.getAIMPanel().addOutputAvailableListener(this);
-		frame.getDisplayPanel().add(appPanel);
-		frame.setVisible(true);	
-		/*Set application dimensions */
-		Rectangle rect = getClientToHost().getAvailableScreen(null);			
-		frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());
+
+		final RECISTFollowUpAdjudicator mainApp = this;
+		
+		// Schedule a job for the event-dispatching thread:
+		// creating and showing this application's GUI.
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+			    public void run() {
+					try {
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				    	RECISTFollowUpAdjudicatorFrame frame = new RECISTFollowUpAdjudicatorFrame(mainApp);
+				    	mainApp.setFrame(frame);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (UnsupportedLookAndFeelException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			});
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
 		recistMgr = RECISTFactory.getInstance();
+		outDir = getClientToHost().getOutputDir();
+		recistMgr.setOutputDir(outDir);
 		dataMgr = ApplicationDataManagerFactory.getInstance();
 		/*Notify Host application was launched*/							
 		ApplicationImpl appImpl = new ApplicationImpl();
 		appImpl.addWG23Listener(this);
 		setAndDeployApplicationService(appImpl);		
 		getClientToHost().notifyStateChanged(State.IDLE);		
+	}
+	
+	public void setFrame(RECISTFollowUpAdjudicatorFrame frameIn)
+	{
+		frame = frameIn;
 	}
 		
 	public static void main(String[] args) {
@@ -87,7 +124,6 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 			args[1] = "http://localhost:8090/HostService";
 			args[2] = "--applicationURL";
 			args[3] = "http://localhost:8060/ApplicationService";*/			
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			System.out.println("Number of parameters: " + args.length);
 			for (int i = 0; i < args.length; i++){
 				System.out.println(i + ". " + args[i]);
@@ -100,20 +136,9 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 				}else if(args[i].equalsIgnoreCase("--applicationURL")){
 					applicationURL = new URL(args[i + 1]);
 				}					
-			}									
+			}
+			
 			new RECISTFollowUpAdjudicator(hostURL, applicationURL);										
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (MalformedURLException e) {			
 			e.printStackTrace();
 		} catch (NullPointerException e){
@@ -150,8 +175,14 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	}		
 	
 	public boolean bringToFront() {
-		frame.setAlwaysOnTop(true);
-		frame.setAlwaysOnTop(false);
+		// Schedule a job for the event-dispatching thread:
+		// bringing to front.
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+				frame.setAlwaysOnTop(true);
+				frame.setAlwaysOnTop(false);
+		    }
+		});
 		return true;
 	}	
 			
@@ -242,39 +273,16 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 			ArrayOfObjectLocator objLocsCurr = getClientToHost().getDataAsFile(arrayUUIDsCurr, true);
 			listObjLocsCurr = objLocsCurr.getObjectLocator();
 		}					
-		//update sene graph
-		if(appPanel.getIvCanvas().set("LoadDicom1.name", getSceneGraphInput(listObjLocsPrev))){
-		appPanel.getIvCanvas().set("DicomExaminer1.viewAll", "");
-		//appPanel.getIvCanvas().processQueue();
-		}
-		if(appPanel.getIvCanvas().set("LoadDicom2.name", getSceneGraphInput(listObjLocsCurr))){
-			appPanel.getIvCanvas().set("DicomExaminer2.viewAll", "");
-			//appPanel.getIvCanvas().processQueue();
-		}
-		//appPanel.getIvCanvas().set("Lut1.bitsUsed", "16");
-		appPanel.getIvCanvas().set("DicomExaminer1.imageIndex", "1");
-		appPanel.getIvCanvas().set("DicomExaminer2.imageIndex", "1");
-		
-		appPanel.getIvCanvas().set("OverlayManager2.create", "1");
-		appPanel.getIvCanvas().set("OverlayManager2.menuEnabled", "1");
-		appPanel.getIvCanvas().set("SelectMode1.index", "2");
-		appPanel.getIvCanvas().set("SelectMode2.index", "2");
-		appPanel.getIvCanvas().set("LockModeToggle.toggle", "");
-		appPanel.getIvCanvas().set("LockModeToggle.on", "");
-				
-		int numTumors = recistMgr.getNumberOfTumors();				
-		if(numTumors == 0){
-			Tumor tumor = null;
-			appPanel.getAIMPanel().addTumorTab(tumor);
-		}
-		for(int i = 0; i< numTumors; i++){
-			Tumor tumor = recistMgr.getTumors().get(i);						
-			appPanel.getAIMPanel().addTumorTab(tumor);						
-		}				
-		outDir = getClientToHost().getOutputDir();
-		recistMgr.setOutputDir(outDir);
-		appPanel.setVisible(true);
-		appPanel.repaint();	
+		//update scene graph
+		final String prev = getSceneGraphInput(listObjLocsPrev);
+		final String curr = getSceneGraphInput(listObjLocsCurr);
+		// Schedule a job for the event-dispatching thread:
+		// loading inputs.
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+		    	frame.setSceneGraphInputs(prev, curr);
+		    }
+		});
 		
 		// Now for the SRs
 		List<ObjectLocator> listObjLocsSR = new ArrayList<ObjectLocator>();
