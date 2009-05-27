@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import sun.awt.SunToolkit;
+
 public class ivCanvas extends Canvas implements ComponentListener ,java.awt.event.KeyListener,java.awt.event.MouseListener,java.awt.event.MouseMotionListener
 {
       
@@ -37,7 +39,11 @@ public class ivCanvas extends Canvas implements ComponentListener ,java.awt.even
     //Initialization
     public void initialize()
     {
-        //Initialize the sceneManager and OpenInventor 
+		// Disable background erase on the ivCanvas
+		SunToolkit tk = (SunToolkit) getToolkit();
+		tk.disableBackgroundErase(this);
+
+		//Initialize the sceneManager and OpenInventor 
         initialSetup();
         
         addComponentListener( this);

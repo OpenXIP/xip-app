@@ -43,6 +43,7 @@ public class RECISTFollowUpAdjudicatorFrame extends JFrame {
 		// previously in RECISTFollowUpAdjudicator
 		appPanel.setVisible(false);
 		appPanel.getAIMPanel().addOutputAvailableListener(mainApp);
+
 		setContentPane(appPanel);
 
 		setVisible(true);
