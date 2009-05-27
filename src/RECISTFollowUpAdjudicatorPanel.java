@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.*;
+
+import sun.awt.SunToolkit;
+
 import edu.wustl.xipApplication.recist.recistGUI.AIMPanel;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,6 +18,8 @@ public class RECISTFollowUpAdjudicatorPanel extends JPanel implements ActionList
 	public RECISTFollowUpAdjudicatorPanel() {       	
 		setLayout(new GridLayout(2, 1));		
 		mivCanvas = new ivCanvas();
+		SunToolkit tk = (SunToolkit) getToolkit();
+		tk.disableBackgroundErase(mivCanvas);
 		add(mivCanvas);
 		add(aimPanel);
 	    mivCanvas.initialize();

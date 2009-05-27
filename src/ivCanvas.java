@@ -318,11 +318,6 @@ public class ivCanvas extends Canvas implements ComponentListener ,java.awt.even
     //Overloaded method which in turn calls paintOpenGL
     public void paint(Graphics g)
     {
-		update(g);
-    }
-
-	public void update(Graphics g)
-	{
 		if (bInitOpenGL == false)
 		{
 			bInitOpenGL = true;
@@ -330,6 +325,11 @@ public class ivCanvas extends Canvas implements ComponentListener ,java.awt.even
 
 		}
 		paintOpenGL();
+    }
+
+	public void update(Graphics g)
+	{
+		paint(g);
 	}
 
 	

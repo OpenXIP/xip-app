@@ -28,29 +28,24 @@ import edu.wustl.xipApplication.recist.Tumor;
  */
 public class RECISTFollowUpAdjudicatorFrame extends JFrame {		
 	private static final long serialVersionUID = 1L;	
-	JPanel displayPanel;		
 	RECISTFollowUpAdjudicatorPanel appPanel = new RECISTFollowUpAdjudicatorPanel();
 	RECISTFollowUpAdjudicator mainApp;
 	
 	public RECISTFollowUpAdjudicatorFrame (RECISTFollowUpAdjudicator mainAppIn){
 		mainApp = mainAppIn;
-		displayPanel = new JPanel();		
-		displayPanel.setLayout(new BorderLayout());
-						
-		add(displayPanel);				
-		displayPanel.setBackground(Color.BLACK);
-				
-		setUndecorated(true);
-		setVisible(true);
 		
+		setUndecorated(true);
+		
+		/*Set application dimensions */
+		Rectangle rect = mainApp.getClientToHost().getAvailableScreen(null);			
+		setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());
+
 		// previously in RECISTFollowUpAdjudicator
 		appPanel.setVisible(false);
 		appPanel.getAIMPanel().addOutputAvailableListener(mainApp);
-		/*frame.*/getDisplayPanel().add(appPanel);
-		/*frame.*/setVisible(true);	
-		/*Set application dimensions */
-		Rectangle rect = mainApp.getClientToHost().getAvailableScreen(null);			
-		/*frame.*/setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());
+		setContentPane(appPanel);
+
+		setVisible(true);
 	}
 	
 	public Dimension getAppPanelDimension(){
@@ -62,7 +57,7 @@ public class RECISTFollowUpAdjudicatorFrame extends JFrame {
 	}			
 	
 	public JPanel getDisplayPanel(){
-		return displayPanel;
+		return appPanel;
 	}
 	
 	public void setSceneGraphInputs(String prev, String curr)
