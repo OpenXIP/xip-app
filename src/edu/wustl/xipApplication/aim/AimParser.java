@@ -6,7 +6,6 @@ package edu.wustl.xipApplication.aim;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.DICOMImageReference;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.Image;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageAnnotation;
-import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageAnnotationIdentifier;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageReference;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImagingObservation;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.Series;
@@ -64,15 +63,15 @@ public class AimParser implements Runnable{
 			tumorName = imageAnnotation.getName();			
 			User rater = imageAnnotation.getUser();
 			raterID = String.valueOf(rater.getUser().getId());
-			raterName = rater.getUser().getAuthorName();
+			raterName = rater.getUser().getName();
 			
 			//AIM INFO
-			String imageAnnotationType = imageAnnotation.getImageAnnotationType().value();			
+			String imageAnnotationType = imageAnnotation.getCodeMeaning();			
 			aimDesc.add(imageAnnotationType + " " + getTumorName());
 			aimDesc.add("Author " + raterName);
 			String anatomicRegion = imageAnnotation.getAnatomicEntityCollection().getAnatomicEntity().get(0).getCodeMeaning();
 			aimDesc.add("Anatomic Region " + anatomicRegion);			
-			String calcType = imageAnnotation.getCalculationCollection().getCalculation().get(0).getType();				
+			String calcType = imageAnnotation.getCalculationCollection().getCalculation().get(0).getCodeMeaning();				
 			double calcTypeValue = imageAnnotation.getCalculationCollection().getCalculation().get(0).getCalculationResultCollection().getCalculationResult().get(0).getDataCollection().getData().get(0).getValue();
 			aimDesc.add(calcType + " " + String.valueOf(calcTypeValue));
 			List<ImagingObservation> imagingObservationColl = imageAnnotation.getImagingObservationCollection().getImagingObservation();
@@ -87,7 +86,7 @@ public class AimParser implements Runnable{
         	Study study = ref.getStudy().getStudy();	        		        		        	
         	Series series = study.getSeries().getSeries();
         	Image image = series.getImageCollection().getImage().get(0);
-        	refSOPInstanceUID = image.getSOPInstanceUID();  
+        	refSOPInstanceUID = image.getSopInstanceUID();  
         	        	
         	StringWriter sw = new StringWriter();
 			marshaller.marshal(obj, sw);
@@ -133,14 +132,15 @@ public class AimParser implements Runnable{
 	}	
 	
 	public static void main (String[] atgs){
-		File file = new File("C:/TmpXIP2/7edc1a2d-934b-464d-9757-830bcfd20330.xml");
-		AimParser aimParser = new AimParser(file);
-		
+		File file = new File("C:/OurDocuments/WashUConsulting/Project/AIM/Sample_AIMAnnotations_TCGA_09302009/AIMAnnotations/Baseline/0022BaselineA.xml");
+		AimParser aimParser = new AimParser(file);		
 		aimParser.run();
 		List<String> desc = aimParser.getAIMDescription();
 		for(int i = 0; i < desc.size(); i++){
 			System.out.println(desc.get(i));
-		}		
+		}
+		System.out.println("-----------------");
+		System.out.println(aimParser.getXMLString());
 		
 	}
 

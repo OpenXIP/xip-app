@@ -6,8 +6,6 @@ package edu.wustl.xipApplication.aim;
 import edu.wustl.xipApplication.recist.RECISTFactory;
 import edu.wustl.xipApplication.recist.RECISTManager;
 import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageAnnotation;
-import gme.cacore_cacore._3_2.edu_northwestern_radiology.ImageAnnotationIdentifier;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +15,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -54,8 +51,8 @@ public class AimSerializer {
 	    InputStream input = new ByteArrayInputStream(bytes);
 		JAXBElement obj = (JAXBElement)unmarshaller.unmarshal(input);	
 		ImageAnnotation imageAnnotation = ((ImageAnnotation)obj.getValue());
-		ImageAnnotationIdentifier type = ImageAnnotationIdentifier.RECIST_BASELINE_TARGET_LESION;			
-		imageAnnotation.setImageAnnotationType(type);
+		//TODO CAUTION: next line contains hard coded value
+		imageAnnotation.setCodeMeaning("Target Lesion Complete Response");
 		String outDir = recistMgr.getOutputDir();		
 		URI uri = null;
 		try {
