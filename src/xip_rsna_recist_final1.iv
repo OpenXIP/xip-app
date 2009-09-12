@@ -1,0 +1,745 @@
+#Inventor V2.1 ascii
+
+DEF SeparatorRenderWindow Separator {
+    Separator {
+	PackedColor {
+	    orderedRGBA	0
+	}
+	DEF SOPInstanceList1 Text2 {
+	    string	[  ] =
+		SoXipGetDicomString {
+		    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
+		    dicom	[  ] =
+			DEF SortDicom1+0 SoXipSortDicom {
+			    inputs [ SoXipMFDataDicom input ]
+			    input	[  ] =
+				DEF LoadDicom1 SoXipLoadDicom {
+				    inputs [  ]
+				    outputs [ SoXipMFDataDicom dicom ]
+				}
+				. dicom
+
+			    outputs [ SoXipMFDataDicom output ]
+			}
+			. output
+
+		    group	0x8
+		    element	0x18
+		    outputs [ MFString string ]
+		}
+		. string
+
+	}
+	DEF SOPInstanceList2 Text2 {
+	    string	[  ] =
+		SoXipGetDicomString {
+		    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
+		    dicom	[  ] =
+			DEF SortDicom2+1 SoXipSortDicom {
+			    inputs [ SoXipMFDataDicom input ]
+			    input	[  ] =
+				DEF LoadDicom2 SoXipLoadDicom {
+				    inputs [  ]
+				    outputs [ SoXipMFDataDicom dicom ]
+				}
+				. dicom
+
+			    outputs [ SoXipMFDataDicom output ]
+			}
+			. output
+
+		    group	0x8
+		    element	0x18
+		    outputs [ MFString string ]
+		}
+		. string
+
+	}
+	DEF LockStatus SoXipText2 {
+	    fields [ SFString string,  ]
+	    string	"FALSE" =
+		DEF LockModeToggle+2 OnOff {
+		}
+		. isOn
+
+	}
+    }
+    DEF LightModelOverlay LightModel {
+	model	BASE_COLOR
+    }
+    DEF ViewportGroup SoXipViewportGroup {
+	fields [ MFVec4f viewports, SFInt32 current ]
+	viewports	[ 0 0 0.5 1,
+			  0.5 0 0.5 1 ]
+	current	1
+	DEF Separator1 Separator {
+	    DEF WindowLevelManip1+3 SoXipWindowLevelManip {
+		fields [ SFFloat window, SFFloat level, SFBool handleComplexity ]
+		window	1400 =
+		    DEF CalculatorWinLevInput1+4 Calculator {
+			a	1400
+			b	40
+			c	2
+			d	0 =
+			    DEF GetDicomAttr1+5 SoXipImageAttributes {
+				inputs [ SoXipSFDataImage image ]
+				image	"NULL" =
+				    USE SortDicom1+0
+				    . output
+
+				outputs [ SFMatrix modelMatrix, SFShort width, SFShort height, SFShort depth,
+					SFShort bitsStored, SFMatrix defaultOrientation, SFShort orthoScanOrientation, SFMatrix orthoOrientation1,
+					SFMatrix orthoOrientation2, SFMatrix orthoOrientation3, SFVec3f defaultCenter ]
+			    }
+			    . bitsStored
+
+			expression	"oa=(a/pow(c, d)) ; ob = ((b+1024)/pow(c, d))"
+		    }
+		    . oa
+
+		level	1064 =
+		    USE CalculatorWinLevInput1+4
+		    . ob
+
+		handleComplexity	TRUE
+	    }
+	    DEF Lut1 SoXipLut {
+		fields [ SFEnum inputMode, SFEnum fileMode, SFEnum outputMode, SFShort bitsUsed,
+			SFFloat rampWidth, SFFloat rampCenter, SFFloat slopeCenter, SFInt32 fileEntries,
+			MFColor arrayColor, MFFloat arrayAlpha ]
+		inputMode	TRAPEZOID
+		fileMode	BYTE_COMMA
+		outputMode	LUMINANCE
+		bitsUsed	0 =
+		    USE GetDicomAttr1+5
+		    . bitsStored
+
+		rampWidth	1400 =
+		    USE WindowLevelManip1+3
+		    . window
+
+		rampCenter	1064 =
+		    USE WindowLevelManip1+3
+		    . level
+
+		slopeCenter	0.9
+		fileEntries	4096
+		arrayColor	[  ]
+		arrayAlpha	[  ]
+	    }
+	    DEF +6 SoXipDogEar {
+		fields [ SFTrigger next, SFTrigger previous ]
+	    }
+	    DEF DicomExaminer1+7 SoXipDicomExaminer {
+		fields [ SoXipMFDataDicom images, SFShort imageIndex, SFTrigger previousImage, SFTrigger nextImage,
+			SFShort sliceIndex, SFFloat viewAllScale, SFEnum mode ]
+		images	[  ] =
+		    USE SortDicom1+0
+		    . output
+
+		imageIndex	-1 =
+		    DEF LockCalculatorba+8 Calculator {
+			a	-1 =
+			    DEF DicomExaminer2+9 SoXipDicomExaminer {
+				fields [ SoXipMFDataDicom images, SFShort imageIndex, SFTrigger previousImage, SFTrigger nextImage,
+					SFShort sliceIndex, SFFloat viewAllScale, SFEnum mode ]
+				images	[  ] =
+				    USE SortDicom2+1
+				    . output
+
+				imageIndex	-1 =
+				    DEF LockCalculatorab+10 Calculator {
+					a	-1 =
+					    USE DicomExaminer1+7
+					    . imageIndex
+
+					b	-1 =
+					    USE LockCalculatorba+8
+					    . a
+
+					c	0 =
+					    DEF +11 Gate {
+						type	"MFInt32"
+						trigger	 =
+						    USE LockModeToggle+2
+						    . toggle
+
+						input	0 =
+						    DEF CalcLockOffset Calculator {
+							a	-1 =
+							    USE DicomExaminer1+7
+							    . imageIndex
+
+							b	-1 =
+							    USE DicomExaminer2+9
+							    . imageIndex
+
+							expression	"oa=a-b"
+						    }
+						    . oa
+
+					    }
+					    . output
+
+					expression	"ob=b" =
+					    DEF SelectOneAb SelectOne {
+						type	"MFString"
+						index	0 =
+						    USE LockModeToggle+2
+						    . isOn
+
+						input	[ "ob=b",
+								  " ob=(a-c)" ]
+					    }
+					    . output
+
+				    }
+				    . ob
+
+				previousImage	 =
+				    DEF +12 SoXipDogEar {
+					fields [ SFTrigger next, SFTrigger previous ]
+				    }
+				    . previous
+
+				nextImage	 =
+				    USE +12
+				    . next
+
+				sliceIndex	-1
+				viewAllScale	1
+				mode	SHIFT =
+				    DEF SelectMode2 SelectOne {
+					type	"MFEnum"
+					index	2
+					input	[ NONE,
+							  PANZOOM,
+							  SHIFT ]
+				    }
+				    . output
+
+			    }
+			    . imageIndex
+
+			b	-1 =
+			    USE LockCalculatorab+10
+			    . a
+
+			c	0 =
+			    USE +11
+			    . output
+
+			expression	"ob=b" =
+			    DEF SelectOneBa SelectOne {
+				type	"MFString"
+				index	0 =
+				    USE LockModeToggle+2
+				    . isOn
+
+				input	[ "ob=b",
+						  " ob=(a+c)" ]
+			    }
+			    . output
+
+		    }
+		    . ob
+
+		previousImage	 =
+		    USE +6
+		    . previous
+
+		nextImage	 =
+		    USE +6
+		    . next
+
+		sliceIndex	-1
+		viewAllScale	1
+		mode	SHIFT =
+		    DEF SelectMode1 SelectOne {
+			type	"MFEnum"
+			index	2
+			input	[ NONE,
+					  PANZOOM,
+					  SHIFT ]
+		    }
+		    . output
+
+	    }
+	    DEF GetDicom1+13 SoXipGetDicom {
+		fields [ SoXipSFDataDicom image ]
+	    }
+	    DEF SeparatorOverlay1 Separator {
+		Group {
+		    DEF DropShadowStyle1 SoXipDropShadowStyle {
+			fields [ SFBool on, SFColor color,  ]
+			on	TRUE
+			color	0.17 0.19 0.33
+		    }
+		    DEF FontOverlay1 Font {
+			name	"times"
+			size	12
+		    }
+		    DEF AdjudicatorColor SoXipOverlayColor {
+			fields [ MFString label, SFColor color,  ]
+			label	""
+			color	1 0 0
+		    }
+		    DEF OverlayColor1 SoXipOverlayColor {
+			fields [ MFString label, SFColor color,  ]
+			label	""
+			color	0.4 0.79 0.93
+		    }
+		}
+		DEF OverlaySettings1 SoXipOverlaySettings {
+		    fields [ SFBool showEnumeration ]
+		    showEnumeration	FALSE
+		}
+		DEF OverlayManager1+14 SoXipOverlayManager {
+		    fields [ SFString shapeClassName, MFString shapeLabel, MFNode overlays,  ]
+		    shapeClassName	"SoXipLineMeasurement"
+		    shapeLabel	"" =
+			DEF OverlaySearch1+15 SoXipOverlaySearch {
+			    fields [ MFString label, SFString type, MFNode overlays,  ]
+			    label	""
+			    type	"SoXipLineMeasurement" =
+				USE OverlayManager1+14
+				. shapeClassName
+
+			    overlays	[  ]
+			}
+			. label
+
+		    overlays	NULL =
+			DEF LoadOverlay1 SoXipLoadOverlay {
+			    inputs [  ]
+			    outputs [ MFNode overlays ]
+			}
+			. overlays
+
+		}
+		USE OverlaySearch1+15
+		AsciiText {
+		    string	"" =
+			DEF SaveOverlay1 SoXipSaveOverlay {
+			    inputs [ MFNode overlays,  ]
+			    overlays	[  ] =
+				USE OverlaySearch1+15
+				. overlays
+
+			    outputs [ SFString status ]
+			}
+			. status
+
+		}
+	    }
+	    Separator {
+		OrthographicCamera {
+		    viewportMapping	LEAVE_ALONE
+		}
+		LightModel {
+		    model	BASE_COLOR
+		}
+		DirectionalLight {
+		}
+		Font {
+		    size	12
+		}
+		BaseColor {
+		    rgb	1 1 1
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.9 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"Slice Index:"
+			    vAlignment	CENTER
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.35 -0.9 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"-1" =
+				USE DicomExaminer1+7
+				. imageIndex
+
+			    vAlignment	CENTER
+			}
+		    }
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.95 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"Slice Pos: "
+			    vAlignment	CENTER
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.4 -0.95 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"" =
+				SoXipGetDicomString {
+				    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
+				    dicom	"NULL" =
+					USE GetDicom1+13
+					. image
+
+				    group	0x20
+				    element	0x1041
+				    outputs [ MFString string ]
+				}
+				. string
+
+			    vAlignment	CENTER
+			}
+		    }
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.85 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"W:  "
+			    vAlignment	CENTER
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.75 -0.85 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"1400" =
+				DEF CalcWinLevOut1+16 Calculator {
+				    a	1400 =
+					USE WindowLevelManip1+3
+					. window
+
+				    b	1064 =
+					USE WindowLevelManip1+3
+					. level
+
+				    c	2
+				    d	0 =
+					USE GetDicomAttr1+5
+					. bitsStored
+
+				    expression	"oa=(a*pow(c, d)) ; ob=(b*pow(c, d))-1024"
+				}
+				. oa
+
+			    vAlignment	CENTER
+			}
+		    }
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.8 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"L: "
+			    vAlignment	CENTER
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.8 -0.8 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"40" =
+				USE CalcWinLevOut1+16
+				. ob
+
+			    vAlignment	CENTER
+			}
+		    }
+		}
+	    }
+	    SoXipViewportBorder {
+		fields [  ]
+	    }
+	}
+	DEF Separator2 Separator {
+	    DEF WindowLevelManip2+17 SoXipWindowLevelManip {
+		fields [ SFFloat window, SFFloat level, SFBool handleComplexity ]
+		window	1400 =
+		    DEF CalculatorWinLevInput2+18 Calculator {
+			a	1400
+			b	40
+			c	2
+			d	0 =
+			    DEF GetDicomAttr2+19 SoXipImageAttributes {
+				inputs [ SoXipSFDataImage image ]
+				image	"NULL" =
+				    USE SortDicom2+1
+				    . output
+
+				outputs [ SFMatrix modelMatrix, SFShort width, SFShort height, SFShort depth,
+					SFShort bitsStored, SFMatrix defaultOrientation, SFShort orthoScanOrientation, SFMatrix orthoOrientation1,
+					SFMatrix orthoOrientation2, SFMatrix orthoOrientation3, SFVec3f defaultCenter ]
+			    }
+			    . bitsStored
+
+			expression	"oa=(a/pow(c, d)) ; ob = ((b+1024)/pow(c, d))"
+		    }
+		    . oa
+
+		level	1064 =
+		    USE CalculatorWinLevInput2+18
+		    . ob
+
+		handleComplexity	TRUE
+	    }
+	    DEF Lut2 SoXipLut {
+		fields [ SFEnum inputMode, SFEnum outputMode, SFShort bitsUsed, SFFloat rampWidth,
+			SFFloat rampCenter, SFFloat slopeCenter, MFColor arrayColor, MFFloat arrayAlpha ]
+		inputMode	TRAPEZOID
+		outputMode	LUMINANCE
+		bitsUsed	0 =
+		    USE GetDicomAttr2+19
+		    . bitsStored
+
+		rampWidth	1400 =
+		    USE WindowLevelManip2+17
+		    . window
+
+		rampCenter	1064 =
+		    USE WindowLevelManip2+17
+		    . level
+
+		slopeCenter	0.9
+		arrayColor	[  ]
+		arrayAlpha	[  ]
+	    }
+	    USE +12
+	    USE DicomExaminer2+9
+	    DEF GetDicom2+20 SoXipGetDicom {
+		fields [ SoXipSFDataDicom image ]
+	    }
+	    DEF SeparatorOverlay2 Separator {
+		Group {
+		    DEF FontOverlay2 Font {
+			name	"times"
+			size	12
+		    }
+		    DEF DropShadowStyle2 SoXipDropShadowStyle {
+			fields [ SFBool on, SFColor color,  ]
+			on	TRUE
+			color	0.17 0.19 0.33
+		    }
+		    DEF OverlayRaterColor SoXipOverlayColor {
+			fields [ MFString label, SFColor color,  ]
+			label	""
+			color	1 0 0
+		    }
+		    DEF OverlayColor2 SoXipOverlayColor {
+			fields [ MFString label, SFColor color,  ]
+			label	""
+			color	0.4 0.79 0.93
+		    }
+		}
+		DEF OverlaySettings2 SoXipOverlaySettings {
+		    fields [ SFBool showEnumeration ]
+		    showEnumeration	FALSE
+		}
+		DEF OverlayManips2 SoXipOverlayManips {
+		    fields [ SFShort numNodesUpToContainer, SFBool multipleSelection, SFBool enableSelection ]
+		}
+		DEF OverlayManager2+21 SoXipOverlayManager {
+		    fields [ SFString shapeClassName, MFString shapeLabel, MFNode overlays,  ]
+		    shapeClassName	"SoXipLineMeasurement"
+		    shapeLabel	""
+		    overlays	NULL =
+			DEF LoadOverlay2 SoXipLoadOverlay {
+			    inputs [  ]
+			    outputs [ MFNode overlays ]
+			}
+			. overlays
+
+		}
+		DEF OverlaySearch2+22 SoXipOverlaySearch {
+		    fields [ MFString label, SFString type, MFNode overlays,  ]
+		    label	""
+		    type	"SoXipLineMeasurement" =
+			USE OverlayManager2+21
+			. shapeClassName
+
+		    overlays	[  ]
+		}
+		AsciiText {
+		    string	"" =
+			DEF SaveOverlay2 SoXipSaveOverlay {
+			    inputs [ MFNode overlays,  ]
+			    overlays	[  ] =
+				USE OverlaySearch2+22
+				. overlays
+
+			    outputs [ SFString status ]
+			}
+			. status
+
+		}
+	    }
+	    Separator {
+		OrthographicCamera {
+		    viewportMapping	LEAVE_ALONE
+		}
+		LightModel {
+		    model	BASE_COLOR
+		}
+		DirectionalLight {
+		}
+		Font {
+		    size	12
+		}
+		BaseColor {
+		    rgb	1 1 1
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.9 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"Slice Index:"
+			    vAlignment	BOTTOM
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.35 -0.9 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"-1" =
+				USE DicomExaminer2+9
+				. imageIndex
+
+			    vAlignment	BOTTOM
+			}
+		    }
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.95 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"Slice Pos: "
+			    vAlignment	BOTTOM
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.4 -0.95 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"" =
+				SoXipGetDicomString {
+				    inputs [ SoXipMFDataDicom dicom, SFUShort group, SFUShort element,  ]
+				    dicom	"NULL" =
+					USE GetDicom2+20
+					. image
+
+				    group	0x20
+				    element	0x1041
+				    outputs [ MFString string ]
+				}
+				. string
+
+			    vAlignment	BOTTOM
+			}
+		    }
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.85 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"W:  "
+			    vAlignment	BOTTOM
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.75 -0.85 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"1400" =
+				DEF CalcWinLevOut2+23 Calculator {
+				    a	1400 =
+					USE WindowLevelManip2+17
+					. window
+
+				    b	1064 =
+					USE WindowLevelManip2+17
+					. level
+
+				    c	2
+				    d	0 =
+					USE GetDicomAttr2+19
+					. bitsStored
+
+				    expression	"oa=(a*pow(c, d)) ; ob=(b*pow(c, d))-1024"
+				}
+				. oa
+
+			    vAlignment	BOTTOM
+			}
+		    }
+		}
+		Separator {
+		    Separator {
+			Translation {
+			    translation	-0.9 -0.8 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"L: "
+			    vAlignment	BOTTOM
+			}
+		    }
+		    Separator {
+			Translation {
+			    translation	-0.8 -0.8 0
+			}
+			SoXipText2 {
+			    fields [ SFString string, SFEnum vAlignment ]
+			    string	"40" =
+				USE CalcWinLevOut2+23
+				. ob
+
+			    vAlignment	BOTTOM
+			}
+		    }
+		}
+	    }
+	    SoXipViewportBorder {
+		fields [  ]
+	    }
+	}
+    }
+}
