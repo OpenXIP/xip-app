@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -49,7 +50,7 @@ public class AimSerializer {
 		this.aimXMLString = aimXMLString;		
 	    byte[] bytes = aimXMLString.getBytes("UTF-8");
 	    InputStream input = new ByteArrayInputStream(bytes);
-		JAXBElement obj = (JAXBElement)unmarshaller.unmarshal(input);	
+		JAXBElement obj = (JAXBElement)unmarshaller.unmarshal(input);
 		ImageAnnotation imageAnnotation = ((ImageAnnotation)obj.getValue());
 		//TODO CAUTION: next line contains hard coded value
 		imageAnnotation.setCodeMeaning("Target Lesion Complete Response");
@@ -59,7 +60,8 @@ public class AimSerializer {
 			uri = new URI(outDir);
 			File file = new File(uri);
 			aimFile = File.createTempFile("AIM-RECIST", ".xml", file);
-			marshaller.marshal(obj, new FileOutputStream(aimFile));			
+			marshaller.marshal(obj, new FileOutputStream(aimFile));
+			marshaller.setProperty("jaxb.schemaLocation", "gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM AIM_TCGA09302009_XML.xsd");
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,5 +73,37 @@ public class AimSerializer {
 	
 	public File getSerializedAIMFile(){
 		return aimFile;
+	}
+	
+	public static void main (String[] atgs){
+		RECISTManager recistMgr = RECISTFactory.getInstance();
+		File fileOut = new File("C:/OurDocuments/WashUConsulting/Project/AIM/Test/");
+		try {
+			recistMgr.setOutputDir(fileOut.toURI().toURL().toExternalForm());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		File file = new File("C:/OurDocuments/WashUConsulting/Project/AIM/Sample_AIMAnnotations_TCGA_09302009/AIMAnnotations/Baseline/0022BaselineA.xml");
+		AimParser aimParser = new AimParser(file);		
+		aimParser.unmarshall(file);		
+		String aimXMLString = aimParser.getXMLString();
+		System.out.println(aimXMLString);
+		System.out.println("----------------------------------------------------------");
+		AimSerializer aimSerializer = new AimSerializer();
+		try {
+			aimSerializer.serialize(aimXMLString);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
