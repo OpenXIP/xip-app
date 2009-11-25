@@ -16,21 +16,22 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for User complex type.
+ * <p>Java class for AnnotationRole complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="User">
+ * &lt;complexType name="AnnotationRole">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="loginName" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="roleInTrial" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="numberWithinRoleOfClinicalTrial" type="{http://www.w3.org/2001/XMLSchema}integer" />
+ *       &lt;attribute name="codeValue" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="codeMeaning" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="codingSchemeDesignator" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="codingSchemeVersion" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="roleSequenceNumber" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -39,19 +40,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "User")
-public class User {
+@XmlType(name = "AnnotationRole")
+public class AnnotationRole {
 
     @XmlAttribute(required = true)
     protected BigInteger id;
     @XmlAttribute(required = true)
-    protected String name;
+    protected String codeValue;
     @XmlAttribute(required = true)
-    protected String loginName;
+    protected String codeMeaning;
+    @XmlAttribute(required = true)
+    protected String codingSchemeDesignator;
     @XmlAttribute
-    protected String roleInTrial;
-    @XmlAttribute
-    protected BigInteger numberWithinRoleOfClinicalTrial;
+    protected String codingSchemeVersion;
+    @XmlAttribute(required = true)
+    protected BigInteger roleSequenceNumber;
 
     /**
      * Gets the value of the id property.
@@ -78,99 +81,123 @@ public class User {
     }
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the codeValue property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getName() {
-        return name;
+    public String getCodeValue() {
+        return codeValue;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the codeValue property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setName(String value) {
-        this.name = value;
+    public void setCodeValue(String value) {
+        this.codeValue = value;
     }
 
     /**
-     * Gets the value of the loginName property.
+     * Gets the value of the codeMeaning property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getLoginName() {
-        return loginName;
+    public String getCodeMeaning() {
+        return codeMeaning;
     }
 
     /**
-     * Sets the value of the loginName property.
+     * Sets the value of the codeMeaning property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setLoginName(String value) {
-        this.loginName = value;
+    public void setCodeMeaning(String value) {
+        this.codeMeaning = value;
     }
 
     /**
-     * Gets the value of the roleInTrial property.
+     * Gets the value of the codingSchemeDesignator property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getRoleInTrial() {
-        return roleInTrial;
+    public String getCodingSchemeDesignator() {
+        return codingSchemeDesignator;
     }
 
     /**
-     * Sets the value of the roleInTrial property.
+     * Sets the value of the codingSchemeDesignator property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setRoleInTrial(String value) {
-        this.roleInTrial = value;
+    public void setCodingSchemeDesignator(String value) {
+        this.codingSchemeDesignator = value;
     }
 
     /**
-     * Gets the value of the numberWithinRoleOfClinicalTrial property.
+     * Gets the value of the codingSchemeVersion property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCodingSchemeVersion() {
+        return codingSchemeVersion;
+    }
+
+    /**
+     * Sets the value of the codingSchemeVersion property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCodingSchemeVersion(String value) {
+        this.codingSchemeVersion = value;
+    }
+
+    /**
+     * Gets the value of the roleSequenceNumber property.
      * 
      * @return
      *     possible object is
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getNumberWithinRoleOfClinicalTrial() {
-        return numberWithinRoleOfClinicalTrial;
+    public BigInteger getRoleSequenceNumber() {
+        return roleSequenceNumber;
     }
 
     /**
-     * Sets the value of the numberWithinRoleOfClinicalTrial property.
+     * Sets the value of the roleSequenceNumber property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigInteger }
      *     
      */
-    public void setNumberWithinRoleOfClinicalTrial(BigInteger value) {
-        this.numberWithinRoleOfClinicalTrial = value;
+    public void setRoleSequenceNumber(BigInteger value) {
+        this.roleSequenceNumber = value;
     }
 
 }

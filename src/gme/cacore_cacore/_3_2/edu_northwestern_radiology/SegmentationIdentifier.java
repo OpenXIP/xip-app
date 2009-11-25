@@ -14,40 +14,37 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for CalculationResultIdentifier.
+ * <p>Java class for SegmentationIdentifier.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="CalculationResultIdentifier">
+ * &lt;simpleType name="SegmentationIdentifier">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Scalar"/>
- *     &lt;enumeration value="Vector"/>
- *     &lt;enumeration value="Histogram"/>
- *     &lt;enumeration value="Matrix"/>
- *     &lt;enumeration value="Array"/>
+ *     &lt;enumeration value="Binary"/>
+ *     &lt;enumeration value="Fractional_Probability"/>
+ *     &lt;enumeration value="Fractional_Occupancy"/>
+ *     &lt;enumeration value="Surface"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
  * 
  */
-@XmlType(name = "CalculationResultIdentifier")
+@XmlType(name = "SegmentationIdentifier")
 @XmlEnum
-public enum CalculationResultIdentifier {
+public enum SegmentationIdentifier {
 
-    @XmlEnumValue("Scalar")
-    SCALAR("Scalar"),
-    @XmlEnumValue("Vector")
-    VECTOR("Vector"),
-    @XmlEnumValue("Histogram")
-    HISTOGRAM("Histogram"),
-    @XmlEnumValue("Matrix")
-    MATRIX("Matrix"),
-    @XmlEnumValue("Array")
-    ARRAY("Array");
+    @XmlEnumValue("Binary")
+    BINARY("Binary"),
+    @XmlEnumValue("Fractional_Probability")
+    FRACTIONAL_PROBABILITY("Fractional_Probability"),
+    @XmlEnumValue("Fractional_Occupancy")
+    FRACTIONAL_OCCUPANCY("Fractional_Occupancy"),
+    @XmlEnumValue("Surface")
+    SURFACE("Surface");
     private final String value;
 
-    CalculationResultIdentifier(String v) {
+    SegmentationIdentifier(String v) {
         value = v;
     }
 
@@ -55,8 +52,8 @@ public enum CalculationResultIdentifier {
         return value;
     }
 
-    public static CalculationResultIdentifier fromValue(String v) {
-        for (CalculationResultIdentifier c: CalculationResultIdentifier.values()) {
+    public static SegmentationIdentifier fromValue(String v) {
+        for (SegmentationIdentifier c: SegmentationIdentifier.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

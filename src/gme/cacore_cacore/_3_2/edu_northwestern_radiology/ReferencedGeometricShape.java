@@ -16,19 +16,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Image complex type.
+ * <p>Java class for ReferencedGeometricShape complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Image">
+ * &lt;complexType name="ReferencedGeometricShape">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
- *       &lt;attribute name="sopClassUID" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="sopInstanceUID" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="referencedShapeIdentifier" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -37,15 +36,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Image")
-public class Image {
+@XmlType(name = "ReferencedGeometricShape")
+public class ReferencedGeometricShape {
 
     @XmlAttribute(required = true)
     protected BigInteger id;
     @XmlAttribute(required = true)
-    protected String sopClassUID;
-    @XmlAttribute(required = true)
-    protected String sopInstanceUID;
+    protected BigInteger referencedShapeIdentifier;
 
     /**
      * Gets the value of the id property.
@@ -72,51 +69,27 @@ public class Image {
     }
 
     /**
-     * Gets the value of the sopClassUID property.
+     * Gets the value of the referencedShapeIdentifier property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link BigInteger }
      *     
      */
-    public String getSopClassUID() {
-        return sopClassUID;
+    public BigInteger getReferencedShapeIdentifier() {
+        return referencedShapeIdentifier;
     }
 
     /**
-     * Sets the value of the sopClassUID property.
+     * Sets the value of the referencedShapeIdentifier property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link BigInteger }
      *     
      */
-    public void setSopClassUID(String value) {
-        this.sopClassUID = value;
-    }
-
-    /**
-     * Gets the value of the sopInstanceUID property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSopInstanceUID() {
-        return sopInstanceUID;
-    }
-
-    /**
-     * Sets the value of the sopInstanceUID property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSopInstanceUID(String value) {
-        this.sopInstanceUID = value;
+    public void setReferencedShapeIdentifier(BigInteger value) {
+        this.referencedShapeIdentifier = value;
     }
 
 }

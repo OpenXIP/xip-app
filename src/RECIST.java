@@ -183,7 +183,7 @@ public class RECIST extends WG23Application implements WG23Listener {
 		List<ObjectLocator> listObjLocsCurr = objLocsCurr.getObjectLocator();
 		
 		
-		//update sene graph
+		//update scene graph
 		if(appPanel.getIvCanvas().set("LoadDicom1.name", getSceneGraphInput(listObjLocsPrev))){
 		appPanel.getIvCanvas().set("DicomExaminer1.viewAll", "");
 		//appPanel.getIvCanvas().processQueue();

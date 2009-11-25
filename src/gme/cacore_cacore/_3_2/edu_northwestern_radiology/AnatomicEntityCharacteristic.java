@@ -9,8 +9,6 @@
 package gme.cacore_cacore._3_2.edu_northwestern_radiology;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -19,21 +17,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for AnatomicEntity complex type.
+ * <p>Java class for AnatomicEntityCharacteristic complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AnatomicEntity">
+ * &lt;complexType name="AnatomicEntityCharacteristic">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="anatomicEntityCharacteristicCollection" minOccurs="0">
+ *         &lt;element name="rating" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="AnatomicEntityCharacteristic" type="{gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM}AnatomicEntityCharacteristic" maxOccurs="unbounded" minOccurs="0"/>
+ *                   &lt;element name="Rating" type="{gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM}Rating" minOccurs="0"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -45,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="codeMeaning" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="codingSchemeDesignator" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="codingSchemeVersion" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="confidence" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="confidence" type="{http://www.w3.org/2001/XMLSchema}double" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -54,12 +52,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AnatomicEntity", propOrder = {
-    "anatomicEntityCharacteristicCollection"
+@XmlType(name = "AnatomicEntityCharacteristic", propOrder = {
+    "rating"
 })
-public class AnatomicEntity {
+public class AnatomicEntityCharacteristic {
 
-    protected AnatomicEntity.AnatomicEntityCharacteristicCollection anatomicEntityCharacteristicCollection;
+    protected AnatomicEntityCharacteristic.Rating rating;
     @XmlAttribute(required = true)
     protected BigInteger id;
     @XmlAttribute(required = true)
@@ -71,30 +69,30 @@ public class AnatomicEntity {
     @XmlAttribute
     protected String codingSchemeVersion;
     @XmlAttribute
-    protected String confidence;
+    protected Double confidence;
 
     /**
-     * Gets the value of the anatomicEntityCharacteristicCollection property.
+     * Gets the value of the rating property.
      * 
      * @return
      *     possible object is
-     *     {@link AnatomicEntity.AnatomicEntityCharacteristicCollection }
+     *     {@link AnatomicEntityCharacteristic.Rating }
      *     
      */
-    public AnatomicEntity.AnatomicEntityCharacteristicCollection getAnatomicEntityCharacteristicCollection() {
-        return anatomicEntityCharacteristicCollection;
+    public AnatomicEntityCharacteristic.Rating getRating() {
+        return rating;
     }
 
     /**
-     * Sets the value of the anatomicEntityCharacteristicCollection property.
+     * Sets the value of the rating property.
      * 
      * @param value
      *     allowed object is
-     *     {@link AnatomicEntity.AnatomicEntityCharacteristicCollection }
+     *     {@link AnatomicEntityCharacteristic.Rating }
      *     
      */
-    public void setAnatomicEntityCharacteristicCollection(AnatomicEntity.AnatomicEntityCharacteristicCollection value) {
-        this.anatomicEntityCharacteristicCollection = value;
+    public void setRating(AnatomicEntityCharacteristic.Rating value) {
+        this.rating = value;
     }
 
     /**
@@ -222,10 +220,10 @@ public class AnatomicEntity {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Double }
      *     
      */
-    public String getConfidence() {
+    public Double getConfidence() {
         return confidence;
     }
 
@@ -234,10 +232,10 @@ public class AnatomicEntity {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Double }
      *     
      */
-    public void setConfidence(String value) {
+    public void setConfidence(Double value) {
         this.confidence = value;
     }
 
@@ -252,7 +250,7 @@ public class AnatomicEntity {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="AnatomicEntityCharacteristic" type="{gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM}AnatomicEntityCharacteristic" maxOccurs="unbounded" minOccurs="0"/>
+     *         &lt;element name="Rating" type="{gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM}Rating" minOccurs="0"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -263,40 +261,35 @@ public class AnatomicEntity {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "anatomicEntityCharacteristic"
+        "rating"
     })
-    public static class AnatomicEntityCharacteristicCollection {
+    public static class Rating {
 
-        @XmlElement(name = "AnatomicEntityCharacteristic")
-        protected List<AnatomicEntityCharacteristic> anatomicEntityCharacteristic;
+        @XmlElement(name = "Rating")
+        protected gme.cacore_cacore._3_2.edu_northwestern_radiology.Rating rating;
 
         /**
-         * Gets the value of the anatomicEntityCharacteristic property.
+         * Gets the value of the rating property.
          * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the anatomicEntityCharacteristic property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getAnatomicEntityCharacteristic().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link AnatomicEntityCharacteristic }
-         * 
-         * 
+         * @return
+         *     possible object is
+         *     {@link gme.cacore_cacore._3_2.edu_northwestern_radiology.Rating }
+         *     
          */
-        public List<AnatomicEntityCharacteristic> getAnatomicEntityCharacteristic() {
-            if (anatomicEntityCharacteristic == null) {
-                anatomicEntityCharacteristic = new ArrayList<AnatomicEntityCharacteristic>();
-            }
-            return this.anatomicEntityCharacteristic;
+        public gme.cacore_cacore._3_2.edu_northwestern_radiology.Rating getRating() {
+            return rating;
+        }
+
+        /**
+         * Sets the value of the rating property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link gme.cacore_cacore._3_2.edu_northwestern_radiology.Rating }
+         *     
+         */
+        public void setRating(gme.cacore_cacore._3_2.edu_northwestern_radiology.Rating value) {
+            this.rating = value;
         }
 
     }

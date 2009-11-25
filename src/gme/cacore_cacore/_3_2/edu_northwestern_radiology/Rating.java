@@ -16,21 +16,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for User complex type.
+ * <p>Java class for Rating complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="User">
+ * &lt;complexType name="Rating">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
+ *       &lt;attribute name="max" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
+ *       &lt;attribute name="min" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="loginName" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="roleInTrial" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="numberWithinRoleOfClinicalTrial" type="{http://www.w3.org/2001/XMLSchema}integer" />
+ *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -39,19 +39,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "User")
-public class User {
+@XmlType(name = "Rating")
+public class Rating {
 
     @XmlAttribute(required = true)
     protected BigInteger id;
     @XmlAttribute(required = true)
+    protected BigInteger max;
+    @XmlAttribute(required = true)
+    protected BigInteger min;
+    @XmlAttribute(required = true)
     protected String name;
     @XmlAttribute(required = true)
-    protected String loginName;
-    @XmlAttribute
-    protected String roleInTrial;
-    @XmlAttribute
-    protected BigInteger numberWithinRoleOfClinicalTrial;
+    protected BigInteger value;
 
     /**
      * Gets the value of the id property.
@@ -75,6 +75,54 @@ public class User {
      */
     public void setId(BigInteger value) {
         this.id = value;
+    }
+
+    /**
+     * Gets the value of the max property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getMax() {
+        return max;
+    }
+
+    /**
+     * Sets the value of the max property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setMax(BigInteger value) {
+        this.max = value;
+    }
+
+    /**
+     * Gets the value of the min property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getMin() {
+        return min;
+    }
+
+    /**
+     * Sets the value of the min property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setMin(BigInteger value) {
+        this.min = value;
     }
 
     /**
@@ -102,75 +150,27 @@ public class User {
     }
 
     /**
-     * Gets the value of the loginName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getLoginName() {
-        return loginName;
-    }
-
-    /**
-     * Sets the value of the loginName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setLoginName(String value) {
-        this.loginName = value;
-    }
-
-    /**
-     * Gets the value of the roleInTrial property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRoleInTrial() {
-        return roleInTrial;
-    }
-
-    /**
-     * Sets the value of the roleInTrial property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRoleInTrial(String value) {
-        this.roleInTrial = value;
-    }
-
-    /**
-     * Gets the value of the numberWithinRoleOfClinicalTrial property.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getNumberWithinRoleOfClinicalTrial() {
-        return numberWithinRoleOfClinicalTrial;
+    public BigInteger getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the numberWithinRoleOfClinicalTrial property.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigInteger }
      *     
      */
-    public void setNumberWithinRoleOfClinicalTrial(BigInteger value) {
-        this.numberWithinRoleOfClinicalTrial = value;
+    public void setValue(BigInteger value) {
+        this.value = value;
     }
 
 }
