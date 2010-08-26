@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
@@ -22,6 +23,7 @@ import org.nema.dicom.wg23.Study;
 import org.nema.dicom.wg23.Uuid;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
+import edu.wustl.xipApplication.applicationGUI.TextDisplayPanel;
 import edu.wustl.xipApplication.application.WG23Application;
 import edu.wustl.xipApplication.wg23.ApplicationImpl;
 import edu.wustl.xipApplication.wg23.WG23Listener;
@@ -33,14 +35,25 @@ import edu.wustl.xipApplication.wg23.WG23Listener;
  */
 public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Listener{
 	State appCurrentState;
+	public static final String OS = System.getProperty("os.name");
 	
 	public XIPAppLazyRetrieveTest (URL hostURL, URL appURL) {
 		super(hostURL, appURL);
 		JFrame frame = new JFrame("XIP Application - Lazy Retrieve Test");	
-		frame.setVisible(true);									
+		if(OS.contains("Windows")){
+			frame.setUndecorated(true);
+		}else{
+			frame.setUndecorated(false);
+			frame.setTitle("XIP Application - Lazy Retrieve Test");	
+			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		}
+		TextDisplayPanel txtArea = new TextDisplayPanel();	
+		JScrollPane scrollPane = new JScrollPane(txtArea);
+		frame.add(scrollPane);
 		/*Set application dimensions */
 		Rectangle rect = getClientToHost().getAvailableScreen(null);			
 		frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());
+		frame.setVisible(true);
 		/*Notify Host application was launched*/					
 		ApplicationImpl appImpl = new ApplicationImpl();
 		appImpl.addWG23Listener(this);
