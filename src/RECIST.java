@@ -213,4 +213,9 @@ public class RECIST extends WG23Application implements WG23Listener {
 		}
 		return true;
 	}
+
+	@Override
+	public State getState() {
+		return appCurrentState;
+	}
 }

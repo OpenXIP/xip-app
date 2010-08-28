@@ -459,4 +459,9 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 			e.printStackTrace();			
 		}
 	}
+
+	@Override
+	public State getState() {
+		return appCurrentState;
+	}
 }
