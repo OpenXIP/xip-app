@@ -3,6 +3,7 @@
  */
 package edu.wustl.xipApplication.samples;
 
+import java.awt.Frame;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.nema.dicom.wg23.Uuid;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.applicationGUI.TextDisplayPanel;
+import edu.wustl.xipApplication.applicationGUI.XIPApplicationFrame;
 import edu.wustl.xipApplication.application.WG23Application;
 import edu.wustl.xipApplication.wg23.ApplicationImpl;
 import edu.wustl.xipApplication.wg23.WG23Listener;
@@ -36,10 +38,11 @@ import edu.wustl.xipApplication.wg23.WG23Listener;
 public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Listener{
 	State appCurrentState;
 	public static final String OS = System.getProperty("os.name");
+	JFrame frame = new JFrame("XIP Application - Lazy Retrieve Test");	
+	TextDisplayPanel txtArea = new TextDisplayPanel();
 	
 	public XIPAppLazyRetrieveTest (URL hostURL, URL appURL) {
 		super(hostURL, appURL);
-		JFrame frame = new JFrame("XIP Application - Lazy Retrieve Test");	
 		if(OS.contains("Windows")){
 			frame.setUndecorated(true);
 		}else{
@@ -47,7 +50,6 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 			frame.setTitle("XIP Application - Lazy Retrieve Test");	
 			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		}
-		TextDisplayPanel txtArea = new TextDisplayPanel();	
 		JScrollPane scrollPane = new JScrollPane(txtArea);
 		frame.add(scrollPane);
 		/*Set application dimensions */
@@ -116,8 +118,20 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 	}
 
 	public boolean bringToFront() {		
+		frame.setAlwaysOnTop(true);						
+		frame.setAlwaysOnTop(false);		
+		if(XIPApplicationFrame.OS.contains("Windows") == false){
+			deiconify(frame);
+		}		
 		return true;
 	}
+
+	public static void deiconify(Frame frame) {
+        int state = frame.getExtendedState();
+        state &= ~Frame.ICONIFIED;
+        frame.setExtendedState(state);
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
 	
 	List<Uuid> uuids = new ArrayList<Uuid>();
 	List<Uuid> getAllUUIDs(){
@@ -133,13 +147,17 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		}*/		
 		List<Patient> patients = availableData.getPatients().getPatient();		
 		for(int i = 0; i < patients.size(); i++){
-			Patient patient = patients.get(i);		
+			Patient patient = patients.get(i);
+			txtArea.append(" " + "\r\n");
+			txtArea.append(patient.getName() + "\r\n");
 			List<Study> studies = patient.getStudies().getStudy();
 			for(int j = 0; j < studies.size(); j++){
-				Study study = studies.get(j);				
+				Study study = studies.get(j);
+				txtArea.append("   " + study.getStudyUID() + "\r\n");
 				List<Series> listOfSeries = study.getSeries().getSeries();
 				for(int k = 0; k < listOfSeries.size(); k++){
 					Series series = listOfSeries.get(k);											
+					txtArea.append("      " + series.getSeriesUID() + "\r\n");
 					ArrayOfObjectDescriptor descriptors = series.getObjectDescriptors();
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m =0;  m < listDescriptors.size(); m++){
@@ -148,23 +166,35 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 					}
 				}
 			}
-		}									
+		}
+		txtArea.append("Last item? " + lastData + "\r\n");
+		//get data as files or native models
 	}
 	
 	public boolean setState(State newState) {		
 		if(State.valueOf(newState.toString()).equals(State.CANCELED)){
 			getClientToHost().notifyStateChanged(State.CANCELED);
+			appCurrentState = State.CANCELED;
 			getClientToHost().notifyStateChanged(State.IDLE);
+			appCurrentState = State.CANCELED;
 		}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
-			getClientToHost().notifyStateChanged(State.EXIT);						
+			getClientToHost().notifyStateChanged(State.EXIT);
+			appCurrentState = State.EXIT;
 			//terminating endpoint and existing system is accomplished through ApplicationTerminator
 			//and ApplicationScheduler. ApplicationSechduler is present to alow termination delay if needed (posible future use)
 			ApplicationTerminator terminator = new ApplicationTerminator(getEndPoint());
 			Thread t = new Thread(terminator);
 			t.start();	
 		}else{
+			appCurrentState = newState;
 			getClientToHost().notifyStateChanged(newState);
 		}
 		return true;
+	}
+
+	@Override
+	public State getState() {
+		System.out.println("Application current state: " + appCurrentState);
+		return appCurrentState;
 	}	
 }
