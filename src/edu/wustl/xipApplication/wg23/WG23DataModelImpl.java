@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007 Washington University in Saint Louis. All Rights Reserved.
+ * Copyright (c) 2007 Washington University in St. Louis. All Rights Reserved.
  */
 package edu.wustl.xipApplication.wg23;
 
@@ -112,5 +112,13 @@ public class WG23DataModelImpl implements WG23DataModel{
 		objLocators.toArray(objLocs);
 		this.objLocators = objLocs;				
 		return this;
-	}	
+	}
+	
+	public static void main (String [] args){
+		File file = new File("./test-content/AIM_2/Vasari-TCGA6330140190470283886.xml");
+		List<File> files = new ArrayList<File>();
+		files.add(file);
+		new WG23DataModelImpl(files);				
+	}
+	
 }

@@ -16,4 +16,5 @@ public interface WG23Listener extends EventListener {
 	public boolean setState(State newState);
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData);
 	public boolean bringToFront();
+	public State getState();
 }

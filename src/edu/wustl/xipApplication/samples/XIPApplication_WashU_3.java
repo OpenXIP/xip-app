@@ -286,6 +286,11 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
         frame.setExtendedState(state);
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
+
+	@Override
+	public State getState() {
+		return appCurrentState;
+	}
 	
 	/*public static void iconify(Frame frame) {
 		int state = frame.getExtendedState();

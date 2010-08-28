@@ -68,8 +68,7 @@ public class ApplicationImpl implements Application {
 	}
 	
 	public State getState() {
-		// TODO Auto-generated method stub
-		return null;
+		return listener.getState();
 	}
 
 	public boolean notifyDataAvailable(AvailableData availableData, boolean lastData) {

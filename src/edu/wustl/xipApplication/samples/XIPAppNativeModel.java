@@ -239,5 +239,10 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
 			getClientToHost().notifyStateChanged(newState);
 		}
 		return true;
+	}
+
+	@Override
+	public State getState() {
+		return appCurrentState;
 	}	
 }
