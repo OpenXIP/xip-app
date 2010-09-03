@@ -3,6 +3,7 @@
  */
 package edu.wustl.xipApplication.samples;
 
+import java.awt.Font;
 import java.awt.Frame;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,6 +41,7 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 	public static final String OS = System.getProperty("os.name");
 	JFrame frame = new JFrame("XIP Application - Lazy Retrieve Test");	
 	TextDisplayPanel txtArea = new TextDisplayPanel();
+	Font font = new Font("Tahoma", 1, 12);	
 	
 	public XIPAppLazyRetrieveTest (URL hostURL, URL appURL) {
 		super(hostURL, appURL);
@@ -50,6 +52,7 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 			frame.setTitle("XIP Application - Lazy Retrieve Test");	
 			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		}
+		txtArea.setFont(font);
 		JScrollPane scrollPane = new JScrollPane(txtArea);
 		frame.add(scrollPane);
 		/*Set application dimensions */
@@ -138,6 +141,7 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		return uuids;
 	}
 	
+	int notificationNumber = 1;
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {		
 		/*if(availableData.getObjectDescriptors() != null){
 			List<ObjectDescriptor> listObjDescs = availableData.getObjectDescriptors().getObjectDescriptor();
@@ -145,19 +149,23 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 				uuids.add(listObjDescs.get(i).getUuid());
 			}
 		}*/		
+		txtArea.append("Notification: " + notificationNumber++ + "\r\n");
 		List<Patient> patients = availableData.getPatients().getPatient();		
 		for(int i = 0; i < patients.size(); i++){
 			Patient patient = patients.get(i);
 			txtArea.append(" " + "\r\n");
 			txtArea.append(patient.getName() + "\r\n");
+			System.out.println(patient.getName());
 			List<Study> studies = patient.getStudies().getStudy();
 			for(int j = 0; j < studies.size(); j++){
 				Study study = studies.get(j);
 				txtArea.append("   " + study.getStudyUID() + "\r\n");
+				System.out.println("   " + study.getStudyUID());
 				List<Series> listOfSeries = study.getSeries().getSeries();
 				for(int k = 0; k < listOfSeries.size(); k++){
 					Series series = listOfSeries.get(k);											
 					txtArea.append("      " + series.getSeriesUID() + "\r\n");
+					System.out.println("      " + series.getSeriesUID());
 					ArrayOfObjectDescriptor descriptors = series.getObjectDescriptors();
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m =0;  m < listDescriptors.size(); m++){
@@ -168,7 +176,47 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 			}
 		}
 		txtArea.append("Last item? " + lastData + "\r\n");
-		//get data as files or native models
+		System.out.println("Last item? " + lastData);
+		txtArea.append("Recieved data. Analysis being performed for 10s." + "\r\n");
+		//from 1 to 11
+		for(int i = 1; i < 11; i++) {
+			txtArea.append(" " + i + " ");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        }
+		txtArea.append("\r\n");
+		txtArea.append("Analysis complete." + "\r\n");
+		txtArea.append("Notifying host about available data." + "\r\n");
+		try {
+			//Thread.sleep(3000);
+			Thread.sleep(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		txtArea.append("Notifying host state changed to COMPLETED." + "\r\n");
+		try {
+			//Thread.sleep(3000);
+			Thread.sleep(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setState(State.COMPLETED);
+		txtArea.append("Notifying host state changed to IDLE." + "\r\n");
+		txtArea.append("-----------------------------------------------------------------------" + "\r\n");
+		try {
+			//Thread.sleep(3000);
+			Thread.sleep(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setState(State.IDLE);
 	}
 	
 	public boolean setState(State newState) {		
