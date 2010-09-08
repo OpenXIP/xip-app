@@ -14,9 +14,11 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
+import org.nema.dicom.wg23.ArrayOfObjectLocator;
 import org.nema.dicom.wg23.ArrayOfUUID;
 import org.nema.dicom.wg23.AvailableData;
 import org.nema.dicom.wg23.ObjectDescriptor;
+import org.nema.dicom.wg23.ObjectLocator;
 import org.nema.dicom.wg23.Patient;
 import org.nema.dicom.wg23.Rectangle;
 import org.nema.dicom.wg23.Series;
@@ -136,13 +138,14 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
 	
-	List<Uuid> uuids = new ArrayList<Uuid>();
+	List<Uuid> uuids;
 	List<Uuid> getAllUUIDs(){
 		return uuids;
 	}
 	
 	int notificationNumber = 1;
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {		
+		uuids = new ArrayList<Uuid>();
 		/*if(availableData.getObjectDescriptors() != null){
 			List<ObjectDescriptor> listObjDescs = availableData.getObjectDescriptors().getObjectDescriptor();
 			for(int i = 0; i < listObjDescs.size(); i++){						
@@ -168,15 +171,32 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 					System.out.println("      " + series.getSeriesUID());
 					ArrayOfObjectDescriptor descriptors = series.getObjectDescriptors();
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
+					txtArea.append("\r\n");
+					txtArea.append("Items UUIDs: " + "\r\n");
 					for(int m =0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
 						uuids.add(desc.getUuid());
+						txtArea.append(desc.getUuid().getUuid() + "\r\n");
+						System.out.println(desc.getUuid().getUuid());
 					}
 				}
 			}
 		}
 		txtArea.append("Last item? " + lastData + "\r\n");
 		System.out.println("Last item? " + lastData);
+		ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
+		List<Uuid> listUUIDs = arrayUUIDs.getUuid();
+		for(int i = 0; i < getAllUUIDs().size(); i++){
+			Uuid uuid = getAllUUIDs().get(i);
+			listUUIDs.add(uuid);
+		}
+		ArrayOfObjectLocator objLocs = getClientToHost().getDataAsFile(arrayUUIDs, true);
+		List<ObjectLocator> listObjectLocators = objLocs.getObjectLocator();
+		txtArea.append("\r\n");
+		txtArea.append("Items location: " + "\r\n");
+		for(ObjectLocator objectLocator : listObjectLocators){
+			txtArea.append(objectLocator.getUuid().getUuid() + "   " + objectLocator.getUri() + "\r\n");
+		}
 		txtArea.append("Recieved data. Analysis being performed for 10s." + "\r\n");
 		//from 1 to 11
 		for(int i = 1; i < 11; i++) {
