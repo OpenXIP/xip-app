@@ -169,10 +169,13 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 					Series series = listOfSeries.get(k);											
 					txtArea.append("      " + series.getSeriesUID() + "\r\n");
 					System.out.println("      " + series.getSeriesUID());
+				}
+				txtArea.append("\r\n");
+				txtArea.append("Items UUIDs: " + "\r\n");
+				for(int k = 0; k < listOfSeries.size(); k++){
+					Series series = listOfSeries.get(k);											
 					ArrayOfObjectDescriptor descriptors = series.getObjectDescriptors();
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
-					txtArea.append("\r\n");
-					txtArea.append("Items UUIDs: " + "\r\n");
 					for(int m =0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
 						uuids.add(desc.getUuid());
