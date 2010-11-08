@@ -254,7 +254,6 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 	}
 	
 	public boolean setState(final State newState) {		
-		System.out.println("Changing state to: " + newState.toString());	
 		Runnable runner = new Runnable(){
 			@Override
 			public void run() {
