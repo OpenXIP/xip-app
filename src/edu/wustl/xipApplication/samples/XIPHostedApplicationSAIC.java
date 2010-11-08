@@ -20,7 +20,6 @@ import org.nema.dicom.wg23.AvailableData;
 import org.nema.dicom.wg23.ObjectDescriptor;
 import org.nema.dicom.wg23.ObjectLocator;
 import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.Rectangle;
 import org.nema.dicom.wg23.Series;
 import org.nema.dicom.wg23.State;
 import org.nema.dicom.wg23.Study;
@@ -48,13 +47,14 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 	public XIPHostedApplicationSAIC (URL hostURL, URL appURL) {
 		super(hostURL, appURL);
 		frame.setTitle("XIPHostedApplicationSAIC");	
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		txtArea.setFont(font);
 		JScrollPane scrollPane = new JScrollPane(txtArea);
 		frame.add(scrollPane);
 		/*Set application dimensions */
-		Rectangle rect = getClientToHost().getAvailableScreen(null);			
-		frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());
+		//Rectangle rect = getClientToHost().getAvailableScreen(null);			
+		//frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight() - 25);
+		//frame.setPreferredSize(new Dimension(rect.getWidth(), rect.getHeight() - 25));
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 		/*Notify Host application was launched*/					
 		ApplicationImpl appImpl = new ApplicationImpl();
@@ -67,6 +67,22 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());			
+			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}		    
 		try {
 			/*args = new String[4];
 			args[0] = "--hostURL";
@@ -89,7 +105,7 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 				}					
 			}			
 			//final XIPApplication_WashU app = new XIPApplication_WashU(new URL(args[0]), new URL(args[1]));			
-			new XIPAppLazyRetrieveTest(hostURL, applicationURL);	
+			new XIPHostedApplicationSAIC(hostURL, applicationURL);	
 			
 		} catch (ClassNotFoundException e1) {
 			// TODO Auto-generated catch block
@@ -237,12 +253,16 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 		setState(State.IDLE);
 	}
 	
-	public boolean setState(State newState) {		
-			if(State.valueOf(newState.toString()).equals(State.CANCELED)){
-				getClientToHost().notifyStateChanged(State.CANCELED);
-				appCurrentState = State.CANCELED;
-				getClientToHost().notifyStateChanged(State.IDLE);
-				appCurrentState = State.CANCELED;
+	public boolean setState(final State newState) {		
+		System.out.println("Changing state to: " + newState.toString());	
+		Runnable runner = new Runnable(){
+			@Override
+			public void run() {
+				if(State.valueOf(newState.toString()).equals(State.CANCELED)){
+					getClientToHost().notifyStateChanged(State.CANCELED);
+					appCurrentState = State.CANCELED;
+					getClientToHost().notifyStateChanged(State.IDLE);
+					appCurrentState = State.CANCELED;
 			}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
 				getClientToHost().notifyStateChanged(State.EXIT);
 				appCurrentState = State.EXIT;
@@ -255,7 +275,11 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 				appCurrentState = newState;
 				getClientToHost().notifyStateChanged(newState);
 			}
-			return true;
+			}
+		};
+		Thread t= new Thread(runner);
+		t.start();
+		return true;
 	}
 	
 	@Override
