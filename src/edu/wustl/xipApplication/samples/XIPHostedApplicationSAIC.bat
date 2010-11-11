@@ -5,5 +5,7 @@
 for /f %%i in ("%0") do set curpath=%%~dpi
 cd /d %curpath%
 cd ../../../..
-java edu.wustl.xipApplication.samples.XIPHostedApplicationSAIC %1 %2 %3 %4
+set CURRENTDIR=%CD%
+java -cp . edu.wustl.xipApplication.samples.XIPHostedApplicationSAIC %1 %2 %3 %4
+REM PAUSE
 EXIT
