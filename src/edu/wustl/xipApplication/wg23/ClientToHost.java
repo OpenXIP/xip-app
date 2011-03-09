@@ -89,8 +89,9 @@ public class ClientToHost implements Host{
 	}
 	
 	public static void main(String arg[]) throws MalformedURLException{
-		ClientToHost client = new ClientToHost(new URL("http://localhost:8090/HostService"+"?wsdl"));
-		//ClientToHost client = new ClientToHost(new URL("http://localhost:4040/HostService"));	
-		client.notifyStateChanged(State.IDLE);
+		//ClientToHost client = new ClientToHost(new URL("http://localhost:8090/HostService"+"?wsdl"));
+		ClientToHost client = new ClientToHost(new URL("http://localhost:8080/xiphostservice/host"));
+		//ClientToHost client = new ClientToHost(new URL("http://localhost:8080/xiphostservice/host"));
+		System.out.println(client.generateUID().getUid());
 	}
 }

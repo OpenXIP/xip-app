@@ -7,14 +7,19 @@ import java.util.List;
 
 import javax.jws.WebService;
 import org.nema.dicom.wg23.Application;
+import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
 import org.nema.dicom.wg23.ArrayOfObjectLocator;
 import org.nema.dicom.wg23.ArrayOfQueryResult;
 import org.nema.dicom.wg23.ArrayOfString;
 import org.nema.dicom.wg23.ArrayOfUUID;
 import org.nema.dicom.wg23.AvailableData;
 import org.nema.dicom.wg23.ModelSetDescriptor;
+import org.nema.dicom.wg23.ObjectDescriptor;
 import org.nema.dicom.wg23.ObjectLocator;
+import org.nema.dicom.wg23.Patient;
+import org.nema.dicom.wg23.Series;
 import org.nema.dicom.wg23.State;
+import org.nema.dicom.wg23.Study;
 import org.nema.dicom.wg23.Uid;
 import org.nema.dicom.wg23.Uuid;
 import edu.wustl.xipApplication.application.ApplicationDataManager;
@@ -72,6 +77,32 @@ public class ApplicationImpl implements Application {
 	}
 
 	public boolean notifyDataAvailable(AvailableData availableData, boolean lastData) {
+		List<Patient> patients = availableData.getPatients().getPatient();		
+		for(int i = 0; i < patients.size(); i++){
+			Patient patient = patients.get(i);
+			System.out.println(patient.getName());
+			List<Study> studies = patient.getStudies().getStudy();
+			for(int j = 0; j < studies.size(); j++){
+				Study study = studies.get(j);
+				System.out.println("   " + study.getStudyUID());
+				List<Series> listOfSeries = study.getSeries().getSeries();
+				for(int k = 0; k < listOfSeries.size(); k++){
+					Series series = listOfSeries.get(k);											
+					System.out.println("      " + series.getSeriesUID());
+				}
+				for(int k = 0; k < listOfSeries.size(); k++){
+					Series series = listOfSeries.get(k);											
+					ArrayOfObjectDescriptor descriptors = series.getObjectDescriptors();
+					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
+					for(int m =0;  m < listDescriptors.size(); m++){
+						ObjectDescriptor desc = listDescriptors.get(m);
+						System.out.println(desc.getUuid().getUuid());
+					}
+				}
+			}
+		}
+		System.out.println("Last item? " + lastData);
+		System.out.println("Listener: " + listener == null);
 		//TODO make use of lastData
 		listener.notifyDataAvailable(availableData, lastData);
 		return true;
