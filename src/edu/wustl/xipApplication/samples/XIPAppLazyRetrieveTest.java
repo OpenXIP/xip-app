@@ -65,6 +65,12 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		ApplicationImpl appImpl = new ApplicationImpl();
 		appImpl.addWG23Listener(this);
 		setAndDeployApplicationService(appImpl);
+		/*try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		getClientToHost().notifyStateChanged(State.IDLE);
 	}
 
@@ -202,7 +208,7 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		}
 		txtArea.append("Recieved data. Analysis being performed for 10s." + "\r\n");
 		//from 1 to 11
-		for(int i = 1; i < 11; i++) {
+		for(int i = 1; i < 6; i++) {
 			txtArea.append(" " + i + " ");
 				try {
 					Thread.sleep(1000);
@@ -243,26 +249,26 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 	}
 	
 	public boolean setState(State newState) {		
-		if(State.valueOf(newState.toString()).equals(State.CANCELED)){
-			getClientToHost().notifyStateChanged(State.CANCELED);
-			appCurrentState = State.CANCELED;
-			getClientToHost().notifyStateChanged(State.IDLE);
-			appCurrentState = State.CANCELED;
-		}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
-			getClientToHost().notifyStateChanged(State.EXIT);
-			appCurrentState = State.EXIT;
-			//terminating endpoint and existing system is accomplished through ApplicationTerminator
-			//and ApplicationScheduler. ApplicationSechduler is present to alow termination delay if needed (posible future use)
-			ApplicationTerminator terminator = new ApplicationTerminator(getEndPoint());
-			Thread t = new Thread(terminator);
-			t.start();	
-		}else{
-			appCurrentState = newState;
-			getClientToHost().notifyStateChanged(newState);
-		}
-		return true;
+			if(State.valueOf(newState.toString()).equals(State.CANCELED)){
+				getClientToHost().notifyStateChanged(State.CANCELED);
+				appCurrentState = State.CANCELED;
+				getClientToHost().notifyStateChanged(State.IDLE);
+				appCurrentState = State.CANCELED;
+			}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
+				getClientToHost().notifyStateChanged(State.EXIT);
+				appCurrentState = State.EXIT;
+				//terminating endpoint and existing system is accomplished through ApplicationTerminator
+				//and ApplicationScheduler. ApplicationSechduler is present to alow termination delay if needed (posible future use)
+				ApplicationTerminator terminator = new ApplicationTerminator(getEndPoint());
+				Thread t = new Thread(terminator);
+				t.start();	
+			}else{
+				appCurrentState = newState;
+				getClientToHost().notifyStateChanged(newState);
+			}
+			return true;
 	}
-
+	
 	@Override
 	public State getState() {
 		System.out.println("Application current state: " + appCurrentState);

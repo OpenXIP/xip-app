@@ -50,10 +50,6 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 		txtArea.setFont(font);
 		JScrollPane scrollPane = new JScrollPane(txtArea);
 		frame.add(scrollPane);
-		/*Set application dimensions */
-		//Rectangle rect = getClientToHost().getAvailableScreen(null);			
-		//frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight() - 25);
-		//frame.setPreferredSize(new Dimension(rect.getWidth(), rect.getHeight() - 25));
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 		/*Notify Host application was launched*/					
@@ -262,22 +258,24 @@ public class XIPHostedApplicationSAIC extends WG23Application implements WG23Lis
 					appCurrentState = State.CANCELED;
 					getClientToHost().notifyStateChanged(State.IDLE);
 					appCurrentState = State.CANCELED;
-			}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
-				getClientToHost().notifyStateChanged(State.EXIT);
-				appCurrentState = State.EXIT;
-				//terminating endpoint and existing system is accomplished through ApplicationTerminator
-				//and ApplicationScheduler. ApplicationSechduler is present to alow termination delay if needed (posible future use)
-				ApplicationTerminator terminator = new ApplicationTerminator(getEndPoint());
-				Thread t = new Thread(terminator);
-				t.start();	
-			}else{
-				appCurrentState = newState;
-				getClientToHost().notifyStateChanged(newState);
-			}
+				}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
+					getClientToHost().notifyStateChanged(State.EXIT);
+					appCurrentState = State.EXIT;
+					//terminating endpoint and existing system is accomplished through ApplicationTerminator
+					//and ApplicationScheduler. ApplicationSechduler is present to alow termination delay if needed (posible future use)
+					ApplicationTerminator terminator = new ApplicationTerminator(getEndPoint());
+					Thread t = new Thread(terminator);
+					t.start();	
+				}else{
+					appCurrentState = newState;
+					getClientToHost().notifyStateChanged(newState);
+				}
 			}
 		};
-		Thread t= new Thread(runner);
-		t.start();
+		//Do not execute in a thread to avoid state synchronization issues
+		//Thread t= new Thread(runner);
+		//t.start();
+		runner.run();
 		return true;
 	}
 	
