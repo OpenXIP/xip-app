@@ -61,7 +61,6 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 		frame.setFocusableWindowState(true);			
 		/*Set application dimensions */
 		Rectangle rect = getClientToHost().getAvailableScreen(null);
-		//TODO getAvailableScreen needs to be reworked to get the right position and size for Mac OS X
 		frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());		
 		/*Notify Host application was launched*/					
 		ApplicationImpl appImpl = new ApplicationImpl();

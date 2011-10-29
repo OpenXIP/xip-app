@@ -40,7 +40,7 @@ public class XIPApplicationFrameNativeModel extends JFrame implements MouseListe
 	public static final String OS = System.getProperty("os.name");
 	
 	public XIPApplicationFrameNativeModel (){				
-		if(OS.contains("Windows")){
+		if(OS.contains("Windows") || OS.contains("Mac OS X")){
 			setUndecorated(true);
 		}else{
 			setUndecorated(false);
