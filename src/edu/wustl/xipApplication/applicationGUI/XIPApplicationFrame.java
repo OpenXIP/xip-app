@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2007 Washington University in Saint Louis. All Rights Reserved.
+ * Copyright (c) 2007-2011 Washington University in St. Louis. All Rights Reserved.
  */
 package edu.wustl.xipApplication.applicationGUI;
 
@@ -15,11 +15,12 @@ import javax.swing.JPanel;
 /**
  * <font  face="Tahoma" size="2">
  * XIPApplicationFrame is undecorated JFrame, containing buttons panel included for testing purposes.<br></br>
- * @version	January 2008
+ * @version	January 2007-2011
  * @author Jaroslaw Krych
  * </font>
  */
 public class XIPApplicationFrame extends JFrame {			
+	private static final long serialVersionUID = 1L;
 	public JButton btnUID = new JButton("GetUID");
 	public JButton btnAsFiles = new JButton("DataAsFiles");		
 	public JButton btnODir = new JButton("Get output DIR");
@@ -32,10 +33,9 @@ public class XIPApplicationFrame extends JFrame {
 	public static final String OS = System.getProperty("os.name");
 	
 	public XIPApplicationFrame (){				
-		//setUndecorated(false);
-		if(OS.contains("Windows")){
+		if(OS.contains("Windows") || OS.contains("Mac OS X")) {
 			setUndecorated(true);
-		}else{
+		} else {
 			setUndecorated(false);
 			setTitle("XIPApplication_WashU_3");	
 			setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
