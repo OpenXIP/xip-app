@@ -3,7 +3,6 @@
  */
 package edu.wustl.xipApplication.samples;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
@@ -32,7 +31,6 @@ import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.applicationGUI.TextDisplayPanel;
 import edu.wustl.xipApplication.application.WG23Application;
-import edu.wustl.xipApplication.applicationGUI.XIPApplicationFrame;
 import edu.wustl.xipApplication.wg23.ApplicationImpl;
 import edu.wustl.xipApplication.wg23.WG23Listener;
 
@@ -176,19 +174,20 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
 	}
 
 	public boolean bringToFront() {		
-		frame.setAlwaysOnTop(true);						
-		frame.setAlwaysOnTop(false);		
-		if(XIPApplicationFrame.OS.contains("Windows") == false){
-			deiconify(frame);
-		}		
+		bringToFrontImpl();
 		return true;
 	}
 
-	public static void deiconify(Frame frame) {
-        int state = frame.getExtendedState();
-        state &= ~Frame.ICONIFIED;
-        frame.setExtendedState(state);
-        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+	private void bringToFrontImpl() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(frame != null) {
+                    frame.toFront();
+                    frame.repaint();
+                }
+            }
+        });
     }
 	
 	
