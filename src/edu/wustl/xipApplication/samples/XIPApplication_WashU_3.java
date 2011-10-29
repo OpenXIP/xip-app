@@ -60,7 +60,8 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 		frame.btnGetAsModels.addActionListener(this);
 		frame.setFocusableWindowState(true);			
 		/*Set application dimensions */
-		Rectangle rect = getClientToHost().getAvailableScreen(null);			
+		Rectangle rect = getClientToHost().getAvailableScreen(null);
+		//TODO getAvailableScreen needs to be reworked to get the right position and size for Mac OS X
 		frame.setBounds(rect.getRefPointX(), rect.getRefPointY(), rect.getWidth(), rect.getHeight());		
 		/*Notify Host application was launched*/					
 		ApplicationImpl appImpl = new ApplicationImpl();
@@ -270,15 +271,23 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 		}		
 		contents.repaint();		
 	}
-
-	public boolean bringToFront() {				
-		frame.setAlwaysOnTop(true);						
-		frame.setAlwaysOnTop(false);		
-		if(XIPApplicationFrame.OS.contains("Windows") == false){
-			deiconify(frame);
-		}		
+	@Override
+	public boolean bringToFront() {	
+		bringToFrontImpl();
 		return true;
 	}
+	
+	private void bringToFrontImpl() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(frame != null) {
+                    frame.toFront();
+                    frame.repaint();
+                }
+            }
+        });
+    }
 	
 	void deiconify(Frame frame) {
         int state = frame.getExtendedState();
