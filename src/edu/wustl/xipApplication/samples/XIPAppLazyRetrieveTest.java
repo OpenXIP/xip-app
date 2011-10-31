@@ -47,7 +47,7 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 	
 	public XIPAppLazyRetrieveTest (URL hostURL, URL appURL) {
 		super(hostURL, appURL);
-		if(OS.contains("Windows")){
+		if(OS.contains("Windows") || OS.contains("Mac OS X")){
 			frame.setUndecorated(true);
 		}else{
 			frame.setUndecorated(false);
