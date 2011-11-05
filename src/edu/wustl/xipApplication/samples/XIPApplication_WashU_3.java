@@ -208,7 +208,7 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 		
 		if(State.valueOf(newState.toString()).equals(State.CANCELED)){
 			getClientToHost().notifyStateChanged(State.CANCELED);
-			getClientToHost().notifyStateChanged(State.IDLE);
+			//getClientToHost().notifyStateChanged(State.IDLE);
 		}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
 			getClientToHost().notifyStateChanged(State.EXIT);						
 			//terminating endpoint and existing system is accomplished through ApplicationTerminator

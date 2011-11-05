@@ -252,8 +252,8 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 			if(State.valueOf(newState.toString()).equals(State.CANCELED)){
 				getClientToHost().notifyStateChanged(State.CANCELED);
 				appCurrentState = State.CANCELED;
-				getClientToHost().notifyStateChanged(State.IDLE);
-				appCurrentState = State.CANCELED;
+				//getClientToHost().notifyStateChanged(State.IDLE);
+				//appCurrentState = State.CANCELED;
 			}else if(State.valueOf(newState.toString()).equals(State.EXIT)){
 				getClientToHost().notifyStateChanged(State.EXIT);
 				appCurrentState = State.EXIT;
