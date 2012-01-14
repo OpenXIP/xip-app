@@ -128,12 +128,21 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		return models;
 	}
 
-	public boolean bringToFront() {		
-		frame.setAlwaysOnTop(true);						
-		frame.setAlwaysOnTop(false);		
-		if(XIPApplicationFrame.OS.contains("Windows") == false){
+	public boolean bringToFront() {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(this != null) {
+                	Rectangle size = getClientToHost().getAvailableScreen(null);
+                	frame.setSize(size.getWidth(), size.getHeight());
+                	frame.toFront();
+                    frame.repaint();
+                }
+            }
+        });
+		/*if(XIPApplicationFrame.OS.contains("Windows") == false){
 			deiconify(frame);
-		}		
+		}*/		
 		return true;
 	}
 
@@ -208,7 +217,7 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		}
 		txtArea.append("Recieved data. Analysis being performed for 10s." + "\r\n");
 		//from 1 to 11
-		for(int i = 1; i < 6; i++) {
+		for(int i = 1; i < 30; i++) {
 			txtArea.append(" " + i + " ");
 				try {
 					Thread.sleep(1000);
