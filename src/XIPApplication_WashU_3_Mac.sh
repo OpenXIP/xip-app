@@ -6,6 +6,7 @@ echo $4
 BASEDIR=$(dirname $0)
 #echo $BASEDIR
 cd $BASEDIR
-java edu.wustl.xipApplication.samples.XIPApplication_WashU_3 $1 $2 $3 $4
+#java edu.wustl.xipApplication.samples.XIPApplication_WashU_3 $1 $2 $3 $4
+java  -agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=y edu.wustl.xipApplication.samples.XIPApplication_WashU_3 $1 $2 $3 $4
 read -p "Press any key to continue..."
 

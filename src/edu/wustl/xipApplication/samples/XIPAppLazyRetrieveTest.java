@@ -215,9 +215,9 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		for(ObjectLocator objectLocator : listObjectLocators){
 			txtArea.append(objectLocator.getUuid().getUuid() + "   " + objectLocator.getUri() + "\r\n");
 		}
-		txtArea.append("Recieved data. Analysis being performed for 10s." + "\r\n");
+		txtArea.append("Recieved data. Analysis being performed." + "\r\n");
 		//from 1 to 11
-		for(int i = 1; i < 30; i++) {
+		for(int i = 1; i < 15; i++) {
 			txtArea.append(" " + i + " ");
 				try {
 					Thread.sleep(1000);

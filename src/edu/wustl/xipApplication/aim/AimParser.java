@@ -57,7 +57,7 @@ public class AimParser implements Runnable{
 	public void unmarshall(File aimXmlFile){				
 		aimDesc = new ArrayList<String>();		
 		try {			
-			JAXBElement obj = (JAXBElement)u.unmarshal(aimXmlFile);							        
+			JAXBElement<?> obj = (JAXBElement<?>)u.unmarshal(aimXmlFile);							        
 			ImageAnnotation imageAnnotation = ((ImageAnnotation)obj.getValue());
 			tumorID = String.valueOf(imageAnnotation.getId());
 			tumorName = imageAnnotation.getName();			
