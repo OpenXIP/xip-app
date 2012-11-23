@@ -54,17 +54,10 @@ public class AimSerializer {
 		ImageAnnotation imageAnnotation = ((ImageAnnotation)obj.getValue());
 		//TODO CAUTION: next line contains hard coded value
 		imageAnnotation.setCodeMeaning("Target Lesion Complete Response");
-		String outDir = recistMgr.getOutputDir();		
-		URI uri = null;
+		aimFile = recistMgr.getOutputFile();
 		try {
-			uri = new URI(outDir);
-			File file = new File(uri);
-			aimFile = File.createTempFile("AIM-RECIST", ".xml", file);
 			marshaller.marshal(obj, new FileOutputStream(aimFile));
 			marshaller.setProperty("jaxb.schemaLocation", "gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM AIM_TCGA09302009_XML.xsd");
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,6 +69,8 @@ public class AimSerializer {
 	}
 	
 	public static void main (String[] atgs){
+		/* No longer pertinent, but needs to be replaced with a test that has a dummy implementation for 
+		 * generating the output file names.
 		RECISTManager recistMgr = RECISTFactory.getInstance();
 		File fileOut = new File("C:/OurDocuments/WashUConsulting/Project/AIM/Test/");
 		try {
@@ -84,6 +79,7 @@ public class AimSerializer {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		*/
 		
 		File file = new File("C:/OurDocuments/WashUConsulting/Project/AIM/Sample_AIMAnnotations_TCGA_09302009/AIMAnnotations/Baseline/0022BaselineA.xml");
 		AimParser aimParser = new AimParser(file);		

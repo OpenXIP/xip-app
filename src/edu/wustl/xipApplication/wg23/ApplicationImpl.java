@@ -6,22 +6,22 @@ package edu.wustl.xipApplication.wg23;
 import java.util.List;
 
 import javax.jws.WebService;
-import org.nema.dicom.wg23.Application;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfObjectLocator;
-import org.nema.dicom.wg23.ArrayOfQueryResult;
-import org.nema.dicom.wg23.ArrayOfString;
-import org.nema.dicom.wg23.ArrayOfUUID;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ModelSetDescriptor;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.ObjectLocator;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.Series;
-import org.nema.dicom.wg23.State;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uid;
-import org.nema.dicom.wg23.Uuid;
+
+import org.nema.dicom.PS3_19.ArrayOfMimeType;
+import org.nema.dicom.PS3_19.ArrayOfQueryResultInfoSet;
+import org.nema.dicom.PS3_19.ArrayOfUID;
+import org.nema.dicom.PS3_19.IApplicationService20100825;
+import org.nema.dicom.PS3_19.ArrayOfObjectLocator;
+import org.nema.dicom.PS3_19.ArrayOfQueryResult;
+import org.nema.dicom.PS3_19.ArrayOfstring;
+import org.nema.dicom.PS3_19.ArrayOfUUID;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.ModelSetDescriptor;
+import org.nema.dicom.PS3_19.ObjectLocator;
+import org.nema.dicom.PS3_19.Rectangle;
+import org.nema.dicom.PS3_19.State;
+import org.nema.dicom.PS3_19.UID;
+import org.nema.dicom.PS3_19.UUID;
 import edu.wustl.xipApplication.application.ApplicationDataManager;
 import edu.wustl.xipApplication.application.ApplicationDataManagerFactory;
 import edu.wustl.xipApplication.wg23.WG23Listener;
@@ -32,48 +32,73 @@ import edu.wustl.xipApplication.wg23.WG23Listener;
  *
  */
 @WebService(
-		serviceName = "ApplicationService",
-        portName="ApplicationPort",
-        targetNamespace = "http://wg23.dicom.nema.org/",
-        endpointInterface = "org.nema.dicom.wg23.Application")
-public class ApplicationImpl implements Application {
+		serviceName = "ApplicationService-20100825",
+        portName="ApplicationServiceBinding",
+        targetNamespace = "http://dicom.nema.org/PS3.19/ApplicationService-20100825",
+        endpointInterface = "org.nema.dicom.PS3_19.IApplicationService20100825")
+public class ApplicationImpl implements IApplicationService20100825 {
 
-	public boolean bringToFront() {		
-		return listener.bringToFront();		
+	@Override
+	public State getState() {
+		return listener.getState();
 	}
 
-	public ModelSetDescriptor getAsModels(ArrayOfUUID uuids, Uid classUID, Uid transferSyntaxUID) {
-		// TODO Auto-generated method stub
-		return null;
-	}	
+	@Override
+	public Boolean setState(State state) {
+		listener.setState(state);
+		//System.out.println("Application recieved:" + newState.toString());
+		return true;
+	}
 
-	public ArrayOfObjectLocator getDataAsFile(ArrayOfUUID uuids, boolean includeBulkData) {
+	@Override
+	public Boolean bringToFront(Rectangle location) {		
+		return listener.bringToFront(location);		
+	}
+
+	@Override
+	public Boolean notifyDataAvailable(AvailableData availableData, Boolean lastData) {
+		//TODO make use of lastData
+		listener.notifyDataAvailable(availableData, lastData);
+		return true;
+	}
+		
+	@Override
+	public ArrayOfObjectLocator getData(ArrayOfUUID objects, ArrayOfUID acceptableTransferSyntaxes, Boolean includeBulkData) {
 		ArrayOfObjectLocator arrayObjLoc = new ArrayOfObjectLocator();					
 		ApplicationDataManager dataMgr = ApplicationDataManagerFactory.getInstance();
 		ObjectLocator[] objLocs = dataMgr.getOutputData().getObjectLocators();
-		if(uuids == null){			
-			return arrayObjLoc;
+		if(objects == null){			
+			return arrayObjLoc;  // TODO check final to see if a null object list gives all objects
 		}
-		List<Uuid> listUUIDs = uuids.getUuid();		
+		// TODO use acceptableTransferSyntaxes
+		List<UUID> listUUIDs = objects.getUUID();		
 		List<ObjectLocator> listObjLocs = arrayObjLoc.getObjectLocator();				
 		for(int i = 0; i < listUUIDs.size(); i++){			
 			for(int j = 0; j < objLocs.length; j++){								
-				if(objLocs[j].getUuid().getUuid().equalsIgnoreCase(listUUIDs.get(i).getUuid())){										
+				if(objLocs[j].getSource().getUuid().equalsIgnoreCase(listUUIDs.get(i).getUuid())){										
 					ObjectLocator obj = objLocs[j];
 					listObjLocs.add(obj);
 				}
 			}
 		}						
-		return arrayObjLoc;		
-	}	
+		return arrayObjLoc;	
+	}
 
-	public ArrayOfObjectLocator getDataAsSpecificTypeFile(ArrayOfUUID objectUUIDs, String mimeType, Uid transferSyntaxUID, boolean includeBulkData) {
+	@Override
+	public void releaseData(ArrayOfUUID objects) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public ModelSetDescriptor getAsModels(ArrayOfUUID objects, UID classUID, ArrayOfMimeType supportedInfoSetTypes) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	public State getState() {
-		return listener.getState();
+	}	
+
+	@Override
+	public void releaseModels(ArrayOfUUID models) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public boolean notifyDataAvailable(AvailableData availableData, boolean lastData) {
@@ -107,19 +132,19 @@ public class ApplicationImpl implements Application {
 		listener.notifyDataAvailable(availableData, lastData);
 		return true;
 	}
-		
-	public ArrayOfQueryResult queryModel(ArrayOfUUID objUUIDs, ArrayOfString modelXpaths, boolean includeBulkDataPointers) {
+	@Override
+	public ArrayOfQueryResult queryModel(ArrayOfUUID models, ArrayOfstring xPaths) {
+		// TODO Auto-generated method stub
+		return null;
+	}  
+	
+	@Override
+	public ArrayOfQueryResultInfoSet queryInfoSet(ArrayOfUUID models, ArrayOfstring modelXpaths) {
 		// TODO Auto-generated method stub
 		return null;
 	}  
 	
 	
-	public boolean setState(State newState) {
-		listener.setState(newState);
-		//System.out.println("Application recieved:" + newState.toString());
-		return true;
-	}
-
 	WG23Listener listener;
     public void addWG23Listener(WG23Listener l) {        
         listener = l;                

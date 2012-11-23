@@ -19,23 +19,27 @@ import java.util.StringTokenizer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfObjectLocator;
-import org.nema.dicom.wg23.ArrayOfQueryResult;
-import org.nema.dicom.wg23.ArrayOfString;
-import org.nema.dicom.wg23.ArrayOfUUID;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ModelSetDescriptor;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.ObjectLocator;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.QueryResult;
-import org.nema.dicom.wg23.Rectangle;
-import org.nema.dicom.wg23.Series;
-import org.nema.dicom.wg23.State;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uid;
-import org.nema.dicom.wg23.Uuid;
+
+import org.nema.dicom.PS3_19.ArrayOfMimeType;
+import org.nema.dicom.PS3_19.ArrayOfObjectDescriptor;
+import org.nema.dicom.PS3_19.ArrayOfObjectLocator;
+import org.nema.dicom.PS3_19.ArrayOfQueryResult;
+import org.nema.dicom.PS3_19.ArrayOfUID;
+import org.nema.dicom.PS3_19.ArrayOfstring;
+import org.nema.dicom.PS3_19.ArrayOfUUID;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.MimeType;
+import org.nema.dicom.PS3_19.ModelSetDescriptor;
+import org.nema.dicom.PS3_19.ObjectDescriptor;
+import org.nema.dicom.PS3_19.ObjectLocator;
+import org.nema.dicom.PS3_19.Patient;
+import org.nema.dicom.PS3_19.QueryResult;
+import org.nema.dicom.PS3_19.Rectangle;
+import org.nema.dicom.PS3_19.Series;
+import org.nema.dicom.PS3_19.State;
+import org.nema.dicom.PS3_19.Study;
+import org.nema.dicom.PS3_19.UID;
+import org.nema.dicom.PS3_19.UUID;
 import com.pixelmed.dicom.AttributeList;
 import com.pixelmed.dicom.StructuredReportBrowser;
 
@@ -59,7 +63,6 @@ import edu.wustl.xipApplication.wg23.WG23Listener;
 public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Listener, OutputAvailableListener{		
 	RECISTFollowUpAdjudicatorFrame frame = null;			
 	
-	String outDir;
 	State appCurrentState;		
 	RECISTManager recistMgr;
 	ApplicationDataManager dataMgr;
@@ -102,8 +105,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		} 
 
 		recistMgr = RECISTFactory.getInstance();
-		outDir = getClientToHost().getOutputDir();
-		recistMgr.setOutputDir(outDir);
+		recistMgr.setWG23Application(this);
 		dataMgr = ApplicationDataManagerFactory.getInstance();
 		/*Notify Host application was launched*/							
 		ApplicationImpl appImpl = new ApplicationImpl();
@@ -155,17 +157,17 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		for (int i = 0; i < size; i++){
 			if(i == 0){
 				String filePath;				
-				filePath = new File(objLocs.get(i).getUri()).getPath();
+				filePath = new File(objLocs.get(i).getURI()).getPath();
 				// input = input + "\"" + nols.get(i).getURI() + "\"" + ", ";					
 				filePath = filePath.substring(6 , filePath.length());
 				input = "[" + "\"" + filePath + "\"" + ", ";								
 			} else if(i < size -1){
-				String filePath = new File(objLocs.get(i).getUri()).getPath();
+				String filePath = new File(objLocs.get(i).getURI()).getPath();
 				//input = input + "\"" + nols.get(i).getURI() + "\"" + ", ";
 				filePath = filePath.substring(6 , filePath.length());
 				input = input + "\"" + filePath + "\"" + ", ";
 			}else if(i == size -1){
-				String filePath = new File(objLocs.get(i).getUri()).getPath();
+				String filePath = new File(objLocs.get(i).getURI()).getPath();
 				//input = input + "\"" + nols.get(i).getURI() + "\"" + ", ";
 				filePath = filePath.substring(6 , filePath.length());
 				input = input + "\"" + filePath + "\"" + "]";
@@ -174,11 +176,16 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		return input;
 	}		
 	
-	public boolean bringToFront() {
+	public boolean bringToFront(final Rectangle location) {
 		// Schedule a job for the event-dispatching thread:
 		// bringing to front.
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
+				if (location != null) {
+					frame.setLocation(location.getRefPointX(), location.getRefPointY());
+					frame.setSize(location.getWidth(), location.getHeight());
+				}
+				// Trick to get the window on top
 				frame.setAlwaysOnTop(true);
 				frame.setAlwaysOnTop(false);
 		    }
@@ -189,10 +196,17 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	List<String> sopInstanceUIDPrev;
 	List<String> sopInstanceUIDCurr;
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {										
-		List<Uuid> uuidsGroup1 = new ArrayList<Uuid>();
-		List<Uuid> uuidsGroup2 = new ArrayList<Uuid>();		
-		List<Uuid> uuidsGSPS = new ArrayList<Uuid>();		
-		List<Uuid> uuidsSR = new ArrayList<Uuid>();		
+		List<UUID> uuidsGroup1 = new ArrayList<UUID>();
+		List<UUID> uuidsGroup2 = new ArrayList<UUID>();		
+		List<UUID> uuidsGSPS = new ArrayList<UUID>();		
+		List<UUID> uuidsSR = new ArrayList<UUID>();		
+		String defaultTSString = "1.2.840.10008.1.2.1";
+		UID lastDescriptorTS = new UID();
+		Boolean sawDefaultTS = false;
+		lastDescriptorTS.setUid("");
+		ArrayOfUID requestedTSArray = new ArrayOfUID();
+		List<UID> listTS = requestedTSArray.getUID();
+
 		//Extract UUIDs for all dicom objects from both groups
 		List<Patient> patients = availableData.getPatients().getPatient();		
 		for(int i = 0; i < patients.size(); i++){
@@ -207,22 +221,37 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m = 0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
+						if ((desc.getTransferSyntaxUID() != null) 
+							&& ( ! desc.getTransferSyntaxUID().getUid().matches(lastDescriptorTS.getUid()))) 
+						{
+							listTS.add(desc.getTransferSyntaxUID());
+							lastDescriptorTS.setUid(desc.getTransferSyntaxUID().getUid());
+							if (lastDescriptorTS.getUid().matches(defaultTSString)) {
+								sawDefaultTS = true;
+							}
+						}
 						String sopClassUID = desc.getClassUID().getUid();
 						String modality = desc.getModality().getModality();
 						if (sopClassUID.equalsIgnoreCase("1.2.840.10008.5.1.4.1.1.11.1")){
-							uuidsGSPS.add(desc.getUuid());
+							uuidsGSPS.add(desc.getDescriptorUuid());
 						}else if (sopClassUID.equalsIgnoreCase("1.2.840.10008.5.1.4.1.1.88.59")){ //KOS
-							uuidsSR.add(desc.getUuid());
+							uuidsSR.add(desc.getDescriptorUuid());
 						}else if(modality.equalsIgnoreCase("SR")){							
-							uuidsSR.add(desc.getUuid());
+							uuidsSR.add(desc.getDescriptorUuid());
 						}else if(j == 0){							
-							uuidsGroup1.add(desc.getUuid());
+							uuidsGroup1.add(desc.getDescriptorUuid());
 						}else if(j == 1){
-							uuidsGroup2.add(desc.getUuid());
+							uuidsGroup2.add(desc.getDescriptorUuid());
 						}	
 					}
 				}
 			}
+		}
+		if ( ! sawDefaultTS) {
+			// add the default transfer syntax if not already there
+			UID defaultTS = new UID();
+			defaultTS.setUid(defaultTSString);
+			listTS.add(defaultTS); 
 		}
 		
 		//1. Determin DICOM dataset prev and current - use xpath to get series date
@@ -231,11 +260,11 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		//what data set prev or curr they belong to
 		List<ObjectDescriptor> aimObjects = availableData.getObjectDescriptors().getObjectDescriptor();		
 		ArrayOfUUID arrayUUIDsAim = new ArrayOfUUID();
-		List<Uuid> listUUIDsAim = arrayUUIDsAim.getUuid();
+		List<UUID> listUUIDsAim = arrayUUIDsAim.getUUID();
 		for(int i = 0; i < aimObjects.size(); i++){
-			listUUIDsAim.add(aimObjects.get(i).getUuid());
+			listUUIDsAim.add(aimObjects.get(i).getDescriptorUuid());
 		}	
-		ArrayOfObjectLocator arrayOfObjectLocator = getClientToHost().getDataAsFile(arrayUUIDsAim, false);
+		ArrayOfObjectLocator arrayOfObjectLocator = getClientToHost().getData(arrayUUIDsAim, requestedTSArray, false);
 		List<ObjectLocator> objectLocatorsAim = arrayOfObjectLocator.getObjectLocator();
 		
 		//3. Get SOPInstanceUIDs for dicom dataset prev
@@ -256,21 +285,21 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		
 		//Get previous dataset		
 		ArrayOfUUID arrayUUIDsPrev = new ArrayOfUUID();
-		List<Uuid> listUUIDsPrev = arrayUUIDsPrev.getUuid();
+		List<UUID> listUUIDsPrev = arrayUUIDsPrev.getUUID();
 		for(int i = 0; i < getDicomUUIDsPrev().size(); i++){
 			listUUIDsPrev.add(getDicomUUIDsPrev().get(i));
 		}
-		ArrayOfObjectLocator objLocsPrev = getClientToHost().getDataAsFile(arrayUUIDsPrev, true);
+		ArrayOfObjectLocator objLocsPrev = getClientToHost().getData(arrayUUIDsPrev, requestedTSArray, true);
 		List<ObjectLocator> listObjLocsPrev = objLocsPrev.getObjectLocator();									
 		//Get current dataset if it is present
 		List<ObjectLocator> listObjLocsCurr = new ArrayList<ObjectLocator>();
 		if(getDicomUUIDsCurr().size() != 0){
 			ArrayOfUUID arrayUUIDsCurr = new ArrayOfUUID();
-			List<Uuid> listUUIDsCurr = arrayUUIDsCurr.getUuid();
+			List<UUID> listUUIDsCurr = arrayUUIDsCurr.getUUID();
 			for(int i = 0; i < getDicomUUIDsCurr().size(); i++){
 				listUUIDsCurr.add(getDicomUUIDsCurr().get(i));
 			}
-			ArrayOfObjectLocator objLocsCurr = getClientToHost().getDataAsFile(arrayUUIDsCurr, true);
+			ArrayOfObjectLocator objLocsCurr = getClientToHost().getData(arrayUUIDsCurr, requestedTSArray, true);
 			listObjLocsCurr = objLocsCurr.getObjectLocator();
 		}					
 		//update scene graph
@@ -288,11 +317,11 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		List<ObjectLocator> listObjLocsSR = new ArrayList<ObjectLocator>();
 		if(uuidsSR.size() != 0){
 			ArrayOfUUID arraySR = new ArrayOfUUID();
-			List<Uuid> listUUIDsSR = arraySR.getUuid();
+			List<UUID> listUUIDsSR = arraySR.getUUID();
 			for(int i = 0; i < uuidsSR.size(); i++){
 				listUUIDsSR.add(uuidsSR.get(i));
 			}
-			ArrayOfObjectLocator objLocsCurr = getClientToHost().getDataAsFile(arraySR, true);
+			ArrayOfObjectLocator objLocsCurr = getClientToHost().getData(arraySR, requestedTSArray, true);
 			listObjLocsSR = objLocsCurr.getObjectLocator();
 		}					
 		displaySR(listObjLocsSR);
@@ -316,18 +345,18 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		return true;
 	}
 		
-	List<Uuid> dicomUUIDsPrev;
-	List<Uuid> dicomUUIDsCurr;
-	List<Uuid> getDicomUUIDsPrev(){
+	List<UUID> dicomUUIDsPrev;
+	List<UUID> dicomUUIDsCurr;
+	List<UUID> getDicomUUIDsPrev(){
 		return dicomUUIDsPrev;
 	}
-	List<Uuid> getDicomUUIDsCurr(){
+	List<UUID> getDicomUUIDsCurr(){
 		return dicomUUIDsCurr;
 	}
 	
-	void arrangeDicomDataSet(List<Uuid> uuidsGroup1, List<Uuid> uuidsGroup2){		
-		dicomUUIDsPrev = new ArrayList<Uuid>();
-		dicomUUIDsCurr = new ArrayList<Uuid>();
+	void arrangeDicomDataSet(List<UUID> uuidsGroup1, List<UUID> uuidsGroup2){		
+		dicomUUIDsPrev = new ArrayList<UUID>();
+		dicomUUIDsCurr = new ArrayList<UUID>();
 		//Check if there is only one dataset
 		if(uuidsGroup1.size() != 0 && uuidsGroup2.size() == 0){
 			dicomUUIDsCurr = uuidsGroup1;
@@ -336,22 +365,24 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 		}else{
 			//Get native models UUIDs for one dicom object from group1 and one from group2		
 			ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
-			List<Uuid> listUUIDs = arrayUUIDs.getUuid();
+			List<UUID> listUUIDs = arrayUUIDs.getUUID();
 			listUUIDs.add(uuidsGroup1.get(0));
 			listUUIDs.add(uuidsGroup2.get(0));
-			Uid uid = new Uid();		
-			uid.setUid("1");
-			Uid transferSyntaxUID = new Uid();
-			transferSyntaxUID.setUid("");
-			ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, transferSyntaxUID);
+			UID uid = new UID();		
+			uid.setUid("1.2.840.10008.7.1.1"); // Native DICOM Model
+			ArrayOfMimeType infosetTypeArray = new ArrayOfMimeType();
+			List<MimeType> infosetTypeList = infosetTypeArray.getMimeType();
+			MimeType infosetType = new MimeType();
+			infosetType.setType("text\\xml");
+			ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, infosetTypeArray);
 			ArrayOfUUID models = msd.getModels();					
-			ArrayOfString arrayOfString = new ArrayOfString();
+			ArrayOfstring arrayOfString = new ArrayOfstring();
 			List<String> xpaths = arrayOfString.getString();
 			xpaths.add("/DicomDataSet/DicomAttribute[@keyword=\"SeriesDate\"]/Value[@number=\"1\"]/text()");									
-			ArrayOfQueryResult results = getClientToHost().queryModel(models, arrayOfString, false);				
-			String dateGroup1 = results.getQueryResult().get(0).getResults().getString().get(0);
+			ArrayOfQueryResult results = getClientToHost().queryModel(models, arrayOfString);				
+			String dateGroup1 = results.getQueryResult().get(0).getResult().getXPathNode().get(0).getValue();
 			dateGroup1 = getParsedResult(dateGroup1);
-			String dateGroup2 = results.getQueryResult().get(1).getResults().getString().get(0);
+			String dateGroup2 = results.getQueryResult().get(1).getResult().getXPathNode().get(0).getValue();
 			dateGroup2 = getParsedResult(dateGroup2);							
 			//System.out.println("Date group 1 " + dateGroup1);
 			//System.out.println("Date group 2 " + dateGroup2);					
@@ -388,29 +419,31 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 	}
 	
 		
-	List<String> getSOPInstanceUIDs(List<Uuid> uuidsGroup){
-		ArrayOfString arrayOfString = new ArrayOfString();
+	List<String> getSOPInstanceUIDs(List<UUID> uuidsGroup){
+		ArrayOfstring arrayOfString = new ArrayOfstring();
 		List<String> xpath = arrayOfString.getString();
 		xpath.add("/DicomDataSet/DicomAttribute[@keyword=\"SOPInstanceUID\"]/Value[@number=\"1\"]/text()");		
 		//PixelData/BulkData/path should not be used to get location of a dicom file, since header of dicom file and bulk data could be in separate places
 		//xpath.add("/DicomDataSet/DicomAttribute[@keyword=\"PixelData\"]/BulkData/@path");
 		ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
-		List<Uuid> listUUIDs = arrayUUIDs.getUuid();		
+		List<UUID> listUUIDs = arrayUUIDs.getUUID();		
 		for(int i = 0; i < uuidsGroup.size(); i++){
 			listUUIDs.add(uuidsGroup.get(i));			
 		}				
-		Uid uid = new Uid();		
-		uid.setUid("1");
-		Uid transferSyntaxUID = new Uid();
-		transferSyntaxUID.setUid("");		
-		ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, transferSyntaxUID);
+		UID uid = new UID();		
+		uid.setUid("1.2.840.10008.7.1.1"); // Native DICOM Model
+		ArrayOfMimeType infosetTypeArray = new ArrayOfMimeType();
+		List<MimeType> infosetTypeList = infosetTypeArray.getMimeType();
+		MimeType infosetType = new MimeType();
+		infosetType.setType("text\\xml");
+		ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, infosetTypeArray);
 		ArrayOfUUID models = msd.getModels();		
-		ArrayOfQueryResult results = getClientToHost().queryModel(models, arrayOfString, false);
+		ArrayOfQueryResult results = getClientToHost().queryModel(models, arrayOfString);
 		List<QueryResult> list = results.getQueryResult();		
 		List<String> listSOPInstanceUIDs = new ArrayList<String>();
 		for(int i = 0; i < list.size(); i++){			
-			if(list.get(i).getXpath().equalsIgnoreCase("/DicomDataSet/DicomAttribute[@keyword=\"SOPInstanceUID\"]/Value[@number=\"1\"]/text()")){								
-				String sopInstanceUID = getParsedResult(list.get(i).getResults().getString().get(0));										
+			if(list.get(i).getXPath().equalsIgnoreCase("/DicomDataSet/DicomAttribute[@keyword=\"SOPInstanceUID\"]/Value[@number=\"1\"]/text()")){								
+				String sopInstanceUID = getParsedResult(list.get(i).getResult().getXPathNode().get(0).getValue());										
 				listSOPInstanceUIDs.add(sopInstanceUID);
 			}			
 		}		
@@ -444,7 +477,7 @@ public class RECISTFollowUpAdjudicator extends WG23Application implements WG23Li
 				for (int i = 0; i < listObjLocsSR.size(); i++) {
 					AttributeList list = new AttributeList();
 					String filePath;
-					URI filePathUri = new URI(listObjLocsSR.get(i).getUri());
+					URI filePathUri = new URI(listObjLocsSR.get(i).getURI());
 					filePath = filePathUri.getSchemeSpecificPart();
 					//filePath = filePath.substring(6 , filePath.length());
 					System.out.println(filePath);

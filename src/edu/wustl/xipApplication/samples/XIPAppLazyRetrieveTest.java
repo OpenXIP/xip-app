@@ -13,18 +13,20 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfObjectLocator;
-import org.nema.dicom.wg23.ArrayOfUUID;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.ObjectLocator;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.Rectangle;
-import org.nema.dicom.wg23.Series;
-import org.nema.dicom.wg23.State;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uuid;
+import org.nema.dicom.PS3_19.ArrayOfObjectDescriptor;
+import org.nema.dicom.PS3_19.ArrayOfObjectLocator;
+import org.nema.dicom.PS3_19.ArrayOfUID;
+import org.nema.dicom.PS3_19.ArrayOfUUID;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.ObjectDescriptor;
+import org.nema.dicom.PS3_19.ObjectLocator;
+import org.nema.dicom.PS3_19.Patient;
+import org.nema.dicom.PS3_19.Rectangle;
+import org.nema.dicom.PS3_19.Series;
+import org.nema.dicom.PS3_19.State;
+import org.nema.dicom.PS3_19.Study;
+import org.nema.dicom.PS3_19.UID;
+import org.nema.dicom.PS3_19.UUID;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.applicationGUI.TextDisplayPanel;
@@ -39,7 +41,7 @@ import edu.wustl.xipApplication.wg23.WG23Listener;
  *
  */
 public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Listener{
-	State appCurrentState;
+	State appCurrentState = State.IDLE;
 	public static final String OS = System.getProperty("os.name");
 	JFrame frame = new JFrame("XIP Application - Lazy Retrieve Test");	
 	TextDisplayPanel txtArea = new TextDisplayPanel();
@@ -128,7 +130,12 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 		return models;
 	}
 
-	public boolean bringToFront() {		
+	public boolean bringToFront(Rectangle location) {		
+		if (location != null) {
+			frame.setLocation(location.getRefPointX(), location.getRefPointY());
+			frame.setSize(location.getWidth(), location.getHeight());
+		}
+		// Trick to get the window on top
 		frame.setAlwaysOnTop(true);						
 		frame.setAlwaysOnTop(false);		
 		if(XIPApplicationFrame.OS.contains("Windows") == false){
@@ -144,14 +151,14 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
 	
-	List<Uuid> uuids;
-	List<Uuid> getAllUUIDs(){
+	List<UUID> uuids;
+	List<UUID> getAllUUIDs(){
 		return uuids;
 	}
 	
 	int notificationNumber = 1;
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {		
-		uuids = new ArrayList<Uuid>();
+		uuids = new ArrayList<UUID>();
 		/*if(availableData.getObjectDescriptors() != null){
 			List<ObjectDescriptor> listObjDescs = availableData.getObjectDescriptors().getObjectDescriptor();
 			for(int i = 0; i < listObjDescs.size(); i++){						
@@ -159,6 +166,12 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 			}
 		}*/		
 		txtArea.append("Notification: " + notificationNumber++ + "\r\n");
+		String defaultTSString = "1.2.840.10008.1.2.1";
+		UID lastDescriptorTS = new UID();
+		Boolean sawDefaultTS = false;
+		lastDescriptorTS.setUid("");
+		ArrayOfUID requestedTSArray = new ArrayOfUID();
+		List<UID> listTS = requestedTSArray.getUID();
 		List<Patient> patients = availableData.getPatients().getPatient();		
 		for(int i = 0; i < patients.size(); i++){
 			Patient patient = patients.get(i);
@@ -184,27 +197,42 @@ public class XIPAppLazyRetrieveTest extends WG23Application implements WG23Liste
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m =0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
-						uuids.add(desc.getUuid());
-						txtArea.append(desc.getUuid().getUuid() + "\r\n");
-						System.out.println(desc.getUuid().getUuid());
+						if ((desc.getTransferSyntaxUID() != null) 
+							&& ( ! desc.getTransferSyntaxUID().getUid().matches(lastDescriptorTS.getUid()))) 
+						{
+							listTS.add(desc.getTransferSyntaxUID());
+							lastDescriptorTS.setUid(desc.getTransferSyntaxUID().getUid());
+							if (lastDescriptorTS.getUid().matches(defaultTSString)) {
+								sawDefaultTS = true;
+							}
+						}
+						uuids.add(desc.getDescriptorUuid());
+						txtArea.append(desc.getDescriptorUuid().getUuid() + "\r\n");
+						System.out.println(desc.getDescriptorUuid().getUuid());
 					}
 				}
 			}
 		}
+		if ( ! sawDefaultTS) {
+			// add the default transfer syntax if not already there
+			UID defaultTS = new UID();
+			defaultTS.setUid(defaultTSString);
+			listTS.add(defaultTS); 
+		}
 		txtArea.append("Last item? " + lastData + "\r\n");
 		System.out.println("Last item? " + lastData);
 		ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
-		List<Uuid> listUUIDs = arrayUUIDs.getUuid();
+		List<UUID> listUUIDs = arrayUUIDs.getUUID();
 		for(int i = 0; i < getAllUUIDs().size(); i++){
-			Uuid uuid = getAllUUIDs().get(i);
+			UUID uuid = getAllUUIDs().get(i);
 			listUUIDs.add(uuid);
 		}
-		ArrayOfObjectLocator objLocs = getClientToHost().getDataAsFile(arrayUUIDs, true);
+		ArrayOfObjectLocator objLocs = getClientToHost().getData(arrayUUIDs, requestedTSArray, true);
 		List<ObjectLocator> listObjectLocators = objLocs.getObjectLocator();
 		txtArea.append("\r\n");
 		txtArea.append("Items location: " + "\r\n");
 		for(ObjectLocator objectLocator : listObjectLocators){
-			txtArea.append(objectLocator.getUuid().getUuid() + "   " + objectLocator.getUri() + "\r\n");
+			txtArea.append(objectLocator.getLocator().getUuid() + "   " + objectLocator.getURI() + "\r\n");
 		}
 		txtArea.append("Recieved data. Analysis being performed for 10s." + "\r\n");
 		//from 1 to 11

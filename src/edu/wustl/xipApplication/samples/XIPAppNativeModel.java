@@ -12,21 +12,24 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfQueryResult;
-import org.nema.dicom.wg23.ArrayOfString;
-import org.nema.dicom.wg23.ArrayOfUUID;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ModelSetDescriptor;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.QueryResult;
-import org.nema.dicom.wg23.Rectangle;
-import org.nema.dicom.wg23.Series;
-import org.nema.dicom.wg23.State;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uid;
-import org.nema.dicom.wg23.Uuid;
+
+import org.nema.dicom.PS3_19.ArrayOfMimeType;
+import org.nema.dicom.PS3_19.ArrayOfObjectDescriptor;
+import org.nema.dicom.PS3_19.ArrayOfQueryResult;
+import org.nema.dicom.PS3_19.ArrayOfstring;
+import org.nema.dicom.PS3_19.ArrayOfUUID;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.MimeType;
+import org.nema.dicom.PS3_19.ModelSetDescriptor;
+import org.nema.dicom.PS3_19.ObjectDescriptor;
+import org.nema.dicom.PS3_19.Patient;
+import org.nema.dicom.PS3_19.QueryResult;
+import org.nema.dicom.PS3_19.Rectangle;
+import org.nema.dicom.PS3_19.Series;
+import org.nema.dicom.PS3_19.State;
+import org.nema.dicom.PS3_19.Study;
+import org.nema.dicom.PS3_19.UID;
+import org.nema.dicom.PS3_19.UUID;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.applicationGUI.TextDisplayPanel;
@@ -122,20 +125,21 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
 		if(e.getSource() == frame.btnGetModels){			
 			txtArea.append(" " + "\r\n");
 			txtArea.append("----- Getting native models ------------------" + "\r\n");
-			List<Uuid> objUUIDs = getAllUUIDs();
+			List<UUID> objUUIDs = getAllUUIDs();
 			ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
-			List<Uuid> listUUIDs = arrayUUIDs.getUuid();
+			List<UUID> listUUIDs = arrayUUIDs.getUUID();
 			for(int i = 0; i < objUUIDs.size(); i++){
 				listUUIDs.add(objUUIDs.get(i));
 			}				
-			Uid uid = new Uid();
-			//uid 1 is used for native models
-			uid.setUid("1");
-			Uid transferSyntaxUID = new Uid();
-			transferSyntaxUID.setUid("");
-			ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, transferSyntaxUID);			
+			UID uid = new UID();
+			uid.setUid("1.2.840.10008.7.1.1"); // Native DICOM Model
+			ArrayOfMimeType infosetTypeArray = new ArrayOfMimeType();
+			List<MimeType> infosetTypeList = infosetTypeArray.getMimeType();
+			MimeType infosetType = new MimeType();
+			infosetType.setType("text\\xml");
+			ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, infosetTypeArray);			
 			models = msd.getModels();
-			List<Uuid> nmUUIDs = msd.getModels().getUuid();
+			List<UUID> nmUUIDs = msd.getModels().getUUID();
 			txtArea.append("Native models: " + "\r\n");
 			for(int i = 0; i < nmUUIDs.size(); i++){
 				txtArea.append(nmUUIDs.get(i).getUuid() + "\r\n");
@@ -145,21 +149,21 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
 		}else if(e.getSource() == frame.btnQuery){								
 			String xpath = frame.xpathBox.getText();
 			//"/DICOM_DATASET/ELEMENT[@name=\"SOPInstanceUID\"]/value[@number=\"1\"]/text()"
-			ArrayOfString modelXPaths = new ArrayOfString();
+			ArrayOfstring modelXPaths = new ArrayOfstring();
 			List<String> listString = modelXPaths.getString();			
 			listString.add(xpath);
 			txtArea.append(" " + "\r\n");
 			txtArea.append("----- Querying native models ------------------" + "\r\n");			
 			ArrayOfUUID models = getModels();			
 			long time1 = System.currentTimeMillis();			
-			ArrayOfQueryResult results = getClientToHost().queryModel(models, modelXPaths, true);	
+			ArrayOfQueryResult results = getClientToHost().queryModel(models, modelXPaths);	
 			long time2 = System.currentTimeMillis();
 			txtArea.append("Total query time: " + (time2 - time1)+ " ms" + "\r\n");
 			List<QueryResult> listQueryResults = results.getQueryResult();
 			for(int i = 0; i < listQueryResults.size(); i++){
 				txtArea.append("Result " + i + "\r\n");								
-				if(listQueryResults.get(i).getResults().getString() != null && listQueryResults.get(i).getResults().getString().size() > 0){					
-					txtArea.append(listQueryResults.get(i).getResults().getString().get(0) + "\r\n");
+				if(listQueryResults.get(i).getResult().getXPathNode() != null && listQueryResults.get(i).getResult().getXPathNode().size() > 0){					
+					txtArea.append(listQueryResults.get(i).getResult().getXPathNode().get(0).getValue() + "\r\n");
 				}				
 			}		
 			txtArea.append(" " + "\r\n");			
@@ -173,7 +177,12 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
 			
 	}
 
-	public boolean bringToFront() {		
+	public boolean bringToFront(Rectangle location) {		
+		if (location != null) {
+			frame.setLocation(location.getRefPointX(), location.getRefPointY());
+			frame.setSize(location.getWidth(), location.getHeight());
+		}
+		// Trick to get the window on top
 		bringToFrontImpl();
 		return true;
 	}
@@ -191,8 +200,8 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
     }
 	
 	
-	List<Uuid> uuids = new ArrayList<Uuid>();
-	List<Uuid> getAllUUIDs(){
+	List<UUID> uuids = new ArrayList<UUID>();
+	List<UUID> getAllUUIDs(){
 		return uuids;
 	}
 	
@@ -216,7 +225,7 @@ public class XIPAppNativeModel extends WG23Application implements ActionListener
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m =0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
-						uuids.add(desc.getUuid());
+						uuids.add(desc.getDescriptorUuid());
 					}
 				}
 			}

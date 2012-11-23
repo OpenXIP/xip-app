@@ -5,14 +5,13 @@ package edu.wustl.xipApplication.application;
 
 import java.net.URL;
 import javax.xml.ws.Endpoint;
-import org.nema.dicom.wg23.Application;
 import edu.wustl.xipApplication.wg23.ApplicationImpl;
 import edu.wustl.xipApplication.wg23.ClientToHost;
 
 public class WG23Application {
 	ClientToHost client; 
 	
-	Application app;
+	ApplicationImpl app;
 	Endpoint endpoint;
 	
 	/**
@@ -25,7 +24,7 @@ public class WG23Application {
 	}
 	
 	public void setAndDeployApplicationService(ApplicationImpl appImpl){
-		app = (Application) appImpl;
+		app = appImpl;
 		String appServiceURL = appURL.toString();
 		endpoint = Endpoint.publish(appServiceURL, app);		
 	}

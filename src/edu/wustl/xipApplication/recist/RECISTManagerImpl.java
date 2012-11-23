@@ -4,6 +4,8 @@
 package edu.wustl.xipApplication.recist;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -11,10 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.nema.dicom.wg23.ObjectLocator;
+
+import org.nema.dicom.PS3_19.ArrayOfstring;
+import org.nema.dicom.PS3_19.ObjectLocator;
 import edu.wustl.xipApplication.aim.AimParser;
 import edu.wustl.xipApplication.aim.AimParseEvent;
 import edu.wustl.xipApplication.aim.AimParseListener;
+import edu.wustl.xipApplication.application.WG23Application;
 
 /**
  * @author Jaroslaw Krych
@@ -31,7 +36,7 @@ public class RECISTManagerImpl implements RECISTManager, AimParseListener {
 		for(int i = 0; i < items.size(); i++){									
 			AimParser parser;
 			try {				
-				parser = new AimParser(new File(new URI(items.get(i).getUri())));
+				parser = new AimParser(new File(new URI(items.get(i).getURI())));
 				parser.addAimParseListener(this);						
 				exeService.execute(parser);		
 			} catch (URISyntaxException e) {
@@ -142,12 +147,35 @@ public class RECISTManagerImpl implements RECISTManager, AimParseListener {
 		return aimGroupCurr;
 	}
 
-	public String getOutputDir() {		
-		return outputDir;
+	public File getOutputFile() {
+		File outputFile = null; 
+		ArrayOfstring preferredProtocols = new ArrayOfstring();
+		List<String> preferredProtocolsList = preferredProtocols.getString();
+		preferredProtocolsList.add("file:");
+		String uriString = myWG23Application.getClientToHost().getOutputLocation(preferredProtocols);
+		if (! uriString.isEmpty()) {
+			URI uri = null;
+			try {
+				uri = new URI(uriString);
+				outputFile = new File(uri);
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (outputFile == null) {
+			try {
+				outputFile = File.createTempFile("AIM-RECIST", ".xml");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		return outputFile;
 	}
 
-	String outputDir;
-	public void setOutputDir(String outputDir) {
-		this.outputDir = outputDir;		
+	WG23Application myWG23Application;
+	public void setWG23Application(WG23Application application) {
+		this.myWG23Application = application;		
 	}
 }

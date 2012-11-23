@@ -2,8 +2,9 @@ package edu.wustl.xipApplication.recist;
 
 import java.io.File;
 import java.util.List;
-import org.nema.dicom.wg23.ObjectLocator;
+import org.nema.dicom.PS3_19.ObjectLocator;
 
+import edu.wustl.xipApplication.application.WG23Application;
 import edu.wustl.xipApplication.wg23.ClientToHost;
 import edu.wustl.xipApplication.wg23.WG23DataModel;
 
@@ -17,6 +18,6 @@ public interface RECISTManager {
 	public abstract void setSOPInstanceUIDCurr(List<String> sopInstanceUIDCurr);
 	public abstract List<File> getAIMPrevious();
 	public abstract List<File> getAIMCurrent();
-	public abstract void setOutputDir(String outputDir);
-	public abstract String getOutputDir();	
+	public abstract void setWG23Application(WG23Application application);
+	public abstract File getOutputFile();	
 }

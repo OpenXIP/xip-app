@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.nema.dicom.wg23.Rectangle;
+import org.nema.dicom.PS3_19.Rectangle;
 
 import edu.wustl.xipApplication.recist.RECISTFactory;
 import edu.wustl.xipApplication.recist.RECISTManager;

@@ -13,23 +13,27 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfObjectLocator;
-import org.nema.dicom.wg23.ArrayOfQueryResult;
-import org.nema.dicom.wg23.ArrayOfString;
-import org.nema.dicom.wg23.ArrayOfUUID;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ModelSetDescriptor;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.ObjectLocator;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.QueryResult;
-import org.nema.dicom.wg23.Rectangle;
-import org.nema.dicom.wg23.Series;
-import org.nema.dicom.wg23.State;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uid;
-import org.nema.dicom.wg23.Uuid;
+
+import org.nema.dicom.PS3_19.ArrayOfMimeType;
+import org.nema.dicom.PS3_19.ArrayOfObjectDescriptor;
+import org.nema.dicom.PS3_19.ArrayOfObjectLocator;
+import org.nema.dicom.PS3_19.ArrayOfQueryResult;
+import org.nema.dicom.PS3_19.ArrayOfUID;
+import org.nema.dicom.PS3_19.ArrayOfstring;
+import org.nema.dicom.PS3_19.ArrayOfUUID;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.MimeType;
+import org.nema.dicom.PS3_19.ModelSetDescriptor;
+import org.nema.dicom.PS3_19.ObjectDescriptor;
+import org.nema.dicom.PS3_19.ObjectLocator;
+import org.nema.dicom.PS3_19.Patient;
+import org.nema.dicom.PS3_19.QueryResult;
+import org.nema.dicom.PS3_19.Rectangle;
+import org.nema.dicom.PS3_19.Series;
+import org.nema.dicom.PS3_19.State;
+import org.nema.dicom.PS3_19.Study;
+import org.nema.dicom.PS3_19.UID;
+import org.nema.dicom.PS3_19.UUID;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.applicationGUI.TextDisplayPanel;
@@ -52,8 +56,7 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 		//frame.setVisible(true);
 		frame.btnUID.addActionListener(this);
 		frame.btnAsFiles.addActionListener(this);
-		frame.btnODir.addActionListener(this);
-		frame.btnTDir.addActionListener(this);
+		frame.btnOLoc.addActionListener(this);
 		frame.btnNotifyOutput.addActionListener(this);
 		frame.btnQuery.addActionListener(this);
 		frame.btnQuery.setEnabled(false);
@@ -124,74 +127,73 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 			contents.append(" " + "\r\n");
 			contents.append("----- Retrieved ObjectLocators ------------------" + "\r\n");
 			ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
-			List<Uuid> listUUIDs = arrayUUIDs.getUuid();
+			List<UUID> listUUIDs = arrayUUIDs.getUUID();
 			for(int i = 0; i < getAllUUIDs().size(); i++){
 				listUUIDs.add(getAllUUIDs().get(i));
 			}			
-			ArrayOfObjectLocator objLocs = getClientToHost().getDataAsFile(arrayUUIDs, true);
+			ArrayOfObjectLocator objLocs = getClientToHost().getData(arrayUUIDs, getAllTransferSyntax(), true);
 			List<ObjectLocator> listObjLocs = objLocs.getObjectLocator();			
 			for(int i = 0; i < listObjLocs.size(); i++){
 				ObjectLocator objLoc = listObjLocs.get(i);
-				contents.append(objLoc.getUuid().getUuid() + "   " + objLoc.getUri() + "\r\n");								
+				contents.append(objLoc.getLocator().getUuid() + "   " + objLoc.getURI() + "\r\n");								
 			}
 			getClientToHost().notifyStateChanged(State.COMPLETED);						
-		}else if (e.getSource() == frame.btnODir ){	
+		}else if (e.getSource() == frame.btnOLoc ){	
 			contents.append(" " + "\r\n");
-			contents.append("----- Host output Dir -----------" + "\r\n");
-			String outDir = getClientToHost().getOutputDir();
+			contents.append("----- Host output location -----------" + "\r\n");
+			ArrayOfstring preferredProtocols = new ArrayOfstring();
+			List<String> preferredProtocolsList = preferredProtocols.getString();
+			preferredProtocolsList.add("file:");
+			String outDir = getClientToHost().getOutputLocation(preferredProtocols);
 			contents.append(outDir + "\r\n");
 			
-		}else if (e.getSource() == frame.btnTDir ){				
-			contents.append(" " + "\r\n");
-			contents.append("----- Host Tmp Dir ------------------" + "\r\n");
-			String tmpDir = getClientToHost().getTmpDir();
-			contents.append(tmpDir + "\r\n");			
 		}else if (e.getSource() == frame.btnNotifyOutput ){	
 			
 			contents.append(" " + "\r\n");
 			contents.append(" " + "\r\n");
 		}else if (e.getSource() == frame.btnGetAsModels ){	
 			contents.append(" " + "\r\n");
-			List<Uuid> objUUIDs = getAllUUIDs();
+			List<UUID> objUUIDs = getAllUUIDs();
 			ArrayOfUUID arrayUUIDs = new ArrayOfUUID();
-			List<Uuid> listUUIDs = arrayUUIDs.getUuid();
+			List<UUID> listUUIDs = arrayUUIDs.getUUID();
 			for(int i = 0; i < objUUIDs.size(); i++){
 				listUUIDs.add(objUUIDs.get(i));
 			}
-			Uid uid = new Uid();
-			//uid 1 is used for native models
-			uid.setUid("1");
-			Uid transferSyntaxUID = new Uid();
-			transferSyntaxUID.setUid("");
+			UID uid = new UID();
+			uid.setUid("1.2.840.10008.7.1.1"); // Native DICOM Model
+			ArrayOfMimeType infosetTypeArray = new ArrayOfMimeType();
+			List<MimeType> infosetTypeList = infosetTypeArray.getMimeType();
+			MimeType infosetType = new MimeType();
+			infosetType.setType("text\\xml");
 			long t1 = System.currentTimeMillis();						
-			ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, transferSyntaxUID);
+			ModelSetDescriptor msd = getClientToHost().getAsModels(arrayUUIDs, uid, infosetTypeArray);
 			long t2 = System.currentTimeMillis();
 			contents.append("Total time to get ModelSetDescriptor " + (t2 - t1) + "\r\n");
 			models = msd.getModels();
-			List<Uuid> nmUUIDs = msd.getModels().getUuid();
+			List<UUID> nmUUIDs = msd.getModels().getUUID();
 			contents.append("Native models: " + "\r\n");
 			for(int i = 0; i < nmUUIDs.size(); i++){
 				contents.append(nmUUIDs.get(i).getUuid() + "\r\n");
 			}
 			contents.append("Failed Source Objects: " + "\r\n");
-			List<Uuid> failedUUIDs = msd.getFailedSourceObjects().getUuid();
+			List<UUID> failedUUIDs = msd.getFailedSourceObjects().getUUID();
 			for(int i = 0; i < failedUUIDs.size(); i++){
 				contents.append(failedUUIDs.get(i).getUuid() + "\r\n");
 			}			
 			contents.append(" " + "\r\n");
 			frame.btnQuery.setEnabled(true);
 		}else if (e.getSource() == frame.btnQuery ){				
-			ArrayOfString modelXPaths = new ArrayOfString();
+			ArrayOfstring modelXPaths = new ArrayOfstring();
 			List<String> listString = modelXPaths.getString();			
 			listString.add("/DicomDataSet/DicomAttribute[@keyword=\"SOPInstanceUID\"]/Value[@number=\"1\"]/text()");									               
 			long t1 = System.currentTimeMillis();			
-			ArrayOfQueryResult results = getClientToHost().queryModel(models, modelXPaths, true);	
+			ArrayOfQueryResult results = getClientToHost().queryModel(models, modelXPaths);	
 			long t2 = System.currentTimeMillis();			
 			List<QueryResult> listQueryResults = results.getQueryResult();
 			for(int i = 0; i < listQueryResults.size(); i++){
 				contents.append("Result " + i + "\r\n");
-				if(listQueryResults.get(i).getResults().getString() != null && listQueryResults.get(i).getResults().getString().size() > 0){					
-					contents.append(listQueryResults.get(i).getResults().getString().get(0) + "\r\n");
+				if(listQueryResults.get(i).getResult().getXPathNode() != null && listQueryResults.get(i).getResult().getXPathNode().size() > 0){					
+					contents.append(listQueryResults.get(i).getResult().getXPathNode().get(0).getValue() + "\r\n");
 				}
 			}								
 			contents.append(" " + "\r\n");			
@@ -224,12 +226,23 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 		return true;
 	}		
 	
-	List<Uuid> uuids = new ArrayList<Uuid>();
-	List<Uuid> getAllUUIDs(){
+	List<UUID> uuids = new ArrayList<UUID>();
+	List<UUID> getAllUUIDs(){
 		return uuids;
 	}
-	
+
+	ArrayOfUID requestedTSArray = new ArrayOfUID();
+	ArrayOfUID getAllTransferSyntax(){
+		return requestedTSArray;
+	}
+
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {		
+		String defaultTSString = "1.2.840.10008.1.2.1";
+		UID lastDescriptorTS = new UID();
+		Boolean sawDefaultTS = false;
+		lastDescriptorTS.setUid("");
+		ArrayOfUID requestedTSArray = new ArrayOfUID();
+		List<UID> listTS = requestedTSArray.getUID();
 		contents.append(" " + "\r\n");
 		contents.append("----- New data available. -----------" + "\r\n");		
 		if(availableData.getObjectDescriptors() != null){
@@ -238,8 +251,17 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 				contents.append("AvailableData object descriptors: " +  "\r\n");
 			}
 			for(int i = 0; i < listObjDescs.size(); i++){			
-				contents.append(i + ". " + listObjDescs.get(i).getUuid().getUuid() +  "   MIME: " + listObjDescs.get(i).getMimeType() + "\r\n");
-				uuids.add(listObjDescs.get(i).getUuid());
+				contents.append(i + ". " + listObjDescs.get(i).getDescriptorUuid().getUuid() +  "   MIME: " + listObjDescs.get(i).getMimeType() + "\r\n");
+				uuids.add(listObjDescs.get(i).getDescriptorUuid());
+				if ((listObjDescs.get(i).getTransferSyntaxUID() != null) 
+						&& ( ! listObjDescs.get(i).getTransferSyntaxUID().getUid().matches(lastDescriptorTS.getUid()))) 
+					{
+						listTS.add(listObjDescs.get(i).getTransferSyntaxUID());
+						lastDescriptorTS.setUid(listObjDescs.get(i).getTransferSyntaxUID().getUid());
+						if (lastDescriptorTS.getUid().matches(defaultTSString)) {
+							sawDefaultTS = true;
+						}
+					}
 			}
 			contents.append("\r\n");
 		}		
@@ -259,8 +281,17 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m =0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
-						uuids.add(desc.getUuid());
-						contents.append( desc.getUuid().getUuid()+ "   " + desc.getModality().getModality() + "   " + desc.getMimeType() + "\r\n");
+						if ((desc.getTransferSyntaxUID() != null) 
+							&& ( ! desc.getTransferSyntaxUID().getUid().matches(lastDescriptorTS.getUid()))) 
+						{
+							listTS.add(desc.getTransferSyntaxUID());
+							lastDescriptorTS.setUid(desc.getTransferSyntaxUID().getUid());
+							if (lastDescriptorTS.getUid().matches(defaultTSString)) {
+								sawDefaultTS = true;
+							}
+						}
+						uuids.add(desc.getDescriptorUuid());
+						contents.append( desc.getDescriptorUuid().getUuid()+ "   " + desc.getModality().getModality() + "   " + desc.getMimeType() + "\r\n");
 					}
 					contents.append("\r\n");
 				}
@@ -268,11 +299,26 @@ public class XIPApplication_WashU_3 extends WG23Application implements ActionLis
 			}
 			contents.append("\r\n");
 		}		
+		if ( ! sawDefaultTS) {
+			// add the default transfer syntax if not already there
+			UID defaultTS = new UID();
+			defaultTS.setUid(defaultTSString);
+			listTS.add(defaultTS); 
+		}
 		contents.repaint();		
 	}
-	@Override
-	public boolean bringToFront() {	
-		bringToFrontImpl();
+
+	public boolean bringToFront(Rectangle location) {				
+		if (location != null) {
+			frame.setLocation(location.getRefPointX(), location.getRefPointY());
+			frame.setSize(location.getWidth(), location.getHeight());
+		}
+		// Trick to get the window on top
+		frame.setAlwaysOnTop(true);						
+		frame.setAlwaysOnTop(false);		
+		if(XIPApplicationFrame.OS.contains("Windows") == false){
+			deiconify(frame);
+		}		
 		return true;
 	}
 	

@@ -23,8 +23,7 @@ public class XIPApplicationFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public JButton btnUID = new JButton("GetUID");
 	public JButton btnAsFiles = new JButton("DataAsFiles");		
-	public JButton btnODir = new JButton("Get output DIR");
-	public JButton btnTDir = new JButton("Get tmp DIR");
+	public JButton btnOLoc = new JButton("Get output location(file)");
 	public JButton btnNotifyOutput = new JButton("Notify output available");	
 	public JButton btnGetAsModels = new JButton("NativeModels");
 	public JButton btnQuery = new JButton("QueryModels");
@@ -44,8 +43,7 @@ public class XIPApplicationFrame extends JFrame {
 		btnPanel.setLayout(new GridLayout(1, 8));
 		btnPanel.add(btnUID);
 		btnPanel.add(btnAsFiles);		
-		btnPanel.add(btnODir);
-		btnPanel.add(btnTDir);
+		btnPanel.add(btnOLoc);
 		btnPanel.add(btnNotifyOutput);
 		btnPanel.add(btnQuery);
 		btnPanel.add(btnGetAsModels);

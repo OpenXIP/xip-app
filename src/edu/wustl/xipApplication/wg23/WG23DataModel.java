@@ -3,8 +3,8 @@
  */
 package edu.wustl.xipApplication.wg23;
 
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ObjectLocator;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.ObjectLocator;
 
 /**
  * @author Jaroslaw Krych

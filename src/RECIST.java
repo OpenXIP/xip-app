@@ -9,18 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfObjectLocator;
-import org.nema.dicom.wg23.ArrayOfUUID;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.ObjectLocator;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.Rectangle;
-import org.nema.dicom.wg23.Series;
-import org.nema.dicom.wg23.State;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uuid;
+import org.nema.dicom.PS3_19.ArrayOfObjectDescriptor;
+import org.nema.dicom.PS3_19.ArrayOfObjectLocator;
+import org.nema.dicom.PS3_19.ArrayOfUID;
+import org.nema.dicom.PS3_19.ArrayOfUUID;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.ObjectDescriptor;
+import org.nema.dicom.PS3_19.ObjectLocator;
+import org.nema.dicom.PS3_19.Patient;
+import org.nema.dicom.PS3_19.Rectangle;
+import org.nema.dicom.PS3_19.Series;
+import org.nema.dicom.PS3_19.State;
+import org.nema.dicom.PS3_19.Study;
+import org.nema.dicom.PS3_19.UID;
+import org.nema.dicom.PS3_19.UUID;
 import edu.wustl.xipApplication.application.ApplicationTerminator;
 import edu.wustl.xipApplication.applicationGUI.ExceptionDialog;
 import edu.wustl.xipApplication.application.WG23Application;
@@ -104,17 +106,17 @@ public class RECIST extends WG23Application implements WG23Listener {
 		for (int i = 0; i < size; i++){
 			if(i == 0){
 				String filePath;				
-				filePath = new File(objLocs.get(i).getUri()).getPath();
+				filePath = new File(objLocs.get(i).getURI()).getPath();
 				// input = input + "\"" + nols.get(i).getURI() + "\"" + ", ";					
 				filePath = filePath.substring(6 , filePath.length());
 				input = "[" + "\"" + filePath + "\"" + ", ";								
 			} else if(i < size -1){
-				String filePath = new File(objLocs.get(i).getUri()).getPath();
+				String filePath = new File(objLocs.get(i).getURI()).getPath();
 				//input = input + "\"" + nols.get(i).getURI() + "\"" + ", ";
 				filePath = filePath.substring(6 , filePath.length());
 				input = input + "\"" + filePath + "\"" + ", ";
 			}else if(i == size -1){
-				String filePath = new File(objLocs.get(i).getUri()).getPath();
+				String filePath = new File(objLocs.get(i).getURI()).getPath();
 				//input = input + "\"" + nols.get(i).getURI() + "\"" + ", ";
 				filePath = filePath.substring(6 , filePath.length());
 				input = input + "\"" + filePath + "\"" + "]";
@@ -122,23 +124,35 @@ public class RECIST extends WG23Application implements WG23Listener {
 		}
 		return input;
 	}		
-	
-	public boolean bringToFront() {
+
+	@Override
+	public boolean bringToFront(Rectangle location) {
+		if (location != null) {
+			frame.setLocation(location.getRefPointX(), location.getRefPointY());
+			frame.setSize(location.getWidth(), location.getHeight());
+		}
+		// Trick to get the window on top
 		frame.setAlwaysOnTop(true);
 		frame.setAlwaysOnTop(false);
 		return true;
 	}	
 	
 	public void notifyDataAvailable(AvailableData availableData, boolean lastData) {
-		List<Uuid> uuidsPrev = new ArrayList<Uuid>();
-		List<Uuid> uuidsCurr = new ArrayList<Uuid>();
+		List<UUID> uuidsPrev = new ArrayList<UUID>();
+		List<UUID> uuidsCurr = new ArrayList<UUID>();
 		//TODO provide implementation for AIM objects
 		/*if(availableData.getObjectDescriptors() != null){
 			List<ObjectDescriptor> listObjDescs = availableData.getObjectDescriptors().getObjectDescriptor();
 			for(int i = 0; i < listObjDescs.size(); i++){						
 				uuids.add(listObjDescs.get(i).getUuid());
 			}
-		}*/	
+		}*/
+		String defaultTSString = "1.2.840.10008.1.2.1";
+		UID lastDescriptorTS = new UID();
+		Boolean sawDefaultTS = false;
+		lastDescriptorTS.setUid("");
+		ArrayOfUID requestedTSArray = new ArrayOfUID();
+		List<UID> listTS = requestedTSArray.getUID();
 		List<Patient> patients = availableData.getPatients().getPatient();		
 		for(int i = 0; i < patients.size(); i++){
 			Patient patient = patients.get(i);		
@@ -153,33 +167,48 @@ public class RECIST extends WG23Application implements WG23Listener {
 					List<ObjectDescriptor> listDescriptors = descriptors.getObjectDescriptor();
 					for(int m = 0;  m < listDescriptors.size(); m++){
 						ObjectDescriptor desc = listDescriptors.get(m);
+						if ((desc.getTransferSyntaxUID() != null) 
+							&& ( ! desc.getTransferSyntaxUID().getUid().matches(lastDescriptorTS.getUid()))) 
+						{
+							listTS.add(desc.getTransferSyntaxUID());
+							lastDescriptorTS.setUid(desc.getTransferSyntaxUID().getUid());
+							if (lastDescriptorTS.getUid().matches(defaultTSString)) {
+								sawDefaultTS = true;
+							}
+						}
 						if(j == 0){
-							uuidsPrev.add(desc.getUuid());
+							uuidsPrev.add(desc.getDescriptorUuid());
 						}else if(j == 1){
-							uuidsCurr.add(desc.getUuid());
+							uuidsCurr.add(desc.getDescriptorUuid());
 						}	
 					}
 				}
 			}
 		}
+		if ( ! sawDefaultTS) {
+			// add the default transfer syntax if not already there
+			UID defaultTS = new UID();
+			defaultTS.setUid(defaultTSString);
+			listTS.add(defaultTS); 
+		}
 		//System.out.println("Prev size " + uuidsPrev.size());
 		//System.out.println("Curr size " + uuidsCurr.size());
 		//get previous dataset
 		ArrayOfUUID arrayUUIDsPrev = new ArrayOfUUID();
-		List<Uuid> listUUIDsPrev = arrayUUIDsPrev.getUuid();
+		List<UUID> listUUIDsPrev = arrayUUIDsPrev.getUUID();
 		for(int i = 0; i < uuidsPrev.size(); i++){
 			listUUIDsPrev.add(uuidsPrev.get(i));
-		}			
-		ArrayOfObjectLocator objLocsPrev = getClientToHost().getDataAsFile(arrayUUIDsPrev, true);
+		}
+		ArrayOfObjectLocator objLocsPrev = getClientToHost().getData(arrayUUIDsPrev, requestedTSArray, true);
 		List<ObjectLocator> listObjLocsPrev = objLocsPrev.getObjectLocator();					
 		
 		//get current dataset
 		ArrayOfUUID arrayUUIDsCurr = new ArrayOfUUID();
-		List<Uuid> listUUIDsCurr = arrayUUIDsCurr.getUuid();
+		List<UUID> listUUIDsCurr = arrayUUIDsCurr.getUUID();
 		for(int i = 0; i < uuidsCurr.size(); i++){
 			listUUIDsCurr.add(uuidsCurr.get(i));
 		}					
-		ArrayOfObjectLocator objLocsCurr = getClientToHost().getDataAsFile(arrayUUIDsCurr, true);
+		ArrayOfObjectLocator objLocsCurr = getClientToHost().getData(arrayUUIDsCurr, requestedTSArray, true);
 		List<ObjectLocator> listObjLocsCurr = objLocsCurr.getObjectLocator();
 		
 		

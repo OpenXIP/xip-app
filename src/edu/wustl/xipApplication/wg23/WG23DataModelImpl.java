@@ -8,18 +8,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.nema.dicom.wg23.ArrayOfObjectDescriptor;
-import org.nema.dicom.wg23.ArrayOfPatient;
-import org.nema.dicom.wg23.ArrayOfSeries;
-import org.nema.dicom.wg23.ArrayOfStudy;
-import org.nema.dicom.wg23.AvailableData;
-import org.nema.dicom.wg23.Modality;
-import org.nema.dicom.wg23.ObjectDescriptor;
-import org.nema.dicom.wg23.ObjectLocator;
-import org.nema.dicom.wg23.Patient;
-import org.nema.dicom.wg23.Study;
-import org.nema.dicom.wg23.Uid;
-import org.nema.dicom.wg23.Uuid;
+import org.nema.dicom.PS3_19.ArrayOfObjectDescriptor;
+import org.nema.dicom.PS3_19.ArrayOfPatient;
+import org.nema.dicom.PS3_19.ArrayOfSeries;
+import org.nema.dicom.PS3_19.ArrayOfStudy;
+import org.nema.dicom.PS3_19.AvailableData;
+import org.nema.dicom.PS3_19.MimeType;
+import org.nema.dicom.PS3_19.Modality;
+import org.nema.dicom.PS3_19.ObjectDescriptor;
+import org.nema.dicom.PS3_19.ObjectLocator;
+import org.nema.dicom.PS3_19.Patient;
+import org.nema.dicom.PS3_19.Study;
+import org.nema.dicom.PS3_19.UID;
 
 import edu.wustl.xipHost.dicom.BasicDicomParser2;
 import edu.wustl.xipHost.dicom.DicomUtil;
@@ -58,9 +58,9 @@ public class WG23DataModelImpl implements WG23DataModel{
 		Study study = new Study();		
 		arrayOfStudy.getStudy().add(study);						
 		patient.setStudies(arrayOfStudy);
-		org.nema.dicom.wg23.Series series = new org.nema.dicom.wg23.Series();				
+		org.nema.dicom.PS3_19.Series series = new org.nema.dicom.PS3_19.Series();				
 		ArrayOfSeries arraySeries = new ArrayOfSeries();
-		List<org.nema.dicom.wg23.Series> listOfSeries = arraySeries.getSeries();
+		List<org.nema.dicom.PS3_19.Series> listOfSeries = arraySeries.getSeries();
 		listOfSeries.add(series);
 		study.setSeries(arraySeries);
 		ArrayOfObjectDescriptor arrayObjectDescriptors = new ArrayOfObjectDescriptor();		
@@ -70,25 +70,30 @@ public class WG23DataModelImpl implements WG23DataModel{
 			try {
 				ObjectDescriptor objDesc = new ObjectDescriptor();
 				//set objDesc
-				Uuid objDescUUID = new Uuid();
+				org.nema.dicom.PS3_19.UUID objDescUUID = new org.nema.dicom.PS3_19.UUID();
 				objDescUUID.setUuid(UUID.randomUUID().toString());
-				objDesc.setUuid(objDescUUID);				
-				String mimeType;			
-				mimeType = DicomUtil.mimeType(files.get(i));
+				objDesc.setDescriptorUuid(objDescUUID);				
+				MimeType mimeType = new MimeType();			
+				mimeType.setType(DicomUtil.mimeType(files.get(i)));
 				objDesc.setMimeType(mimeType);
-				if(mimeType.equalsIgnoreCase("application/dicom")){
+				if(mimeType.getType().equalsIgnoreCase("application/dicom")){
 					dicomParser.parse(files.get(i));
 					String classUID = dicomParser.getSOPClassUID();
-					Uid uid = new Uid();
+					UID uid = new UID();
 					uid.setUid(classUID);
 					objDesc.setClassUID(uid);
+					String transferSyntax;
+					transferSyntax = dicomParser.getTransferSyntaxUID();
+					UID tsUID = new UID();
+					tsUID.setUid(transferSyntax);
+					objDesc.setTransferSyntaxUID(tsUID);
 					String modCode = dicomParser.getModality();						
 					Modality modality = new Modality();
 					modality.setModality(modCode);
 					objDesc.setModality(modality);
 					listObjectDescriptors.add(objDesc);	
 				}else{
-					Uid uid = new Uid();
+					UID uid = new UID();
 					uid.setUid("");
 					objDesc.setClassUID(uid);
 					String modCode = "";						
@@ -98,8 +103,12 @@ public class WG23DataModelImpl implements WG23DataModel{
 					listObjectDescriptorsAvailableData.add(objDesc);
 				}										
 				ObjectLocator objLoc = new ObjectLocator();				
-				objLoc.setUuid(objDescUUID);				
-				objLoc.setUri(files.get(i).toURI().toURL().toExternalForm());				
+				objLoc.setSource(objDescUUID);				
+				objLoc.setLocator(objDescUUID);	// TODO Set to a new UUID?
+				objLoc.setOffset(0L);
+				objLoc.setLength(files.get(i).length());
+				objLoc.setTransferSyntax(objDesc.getTransferSyntaxUID());
+				objLoc.setURI(files.get(i).toURI().toURL().toExternalForm());				
 				objLocators.add(objLoc);
 			} catch (IOException e) {				
 				return null;

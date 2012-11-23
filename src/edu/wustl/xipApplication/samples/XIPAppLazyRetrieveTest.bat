@@ -5,5 +5,7 @@
 for /f %%i in ("%0") do set curpath=%%~dpi
 cd /d %curpath%
 cd ../../../..
-java edu.wustl.xipApplication.samples.XIPAppLazyRetrieveTest %1 %2 %3 %4
+rem java edu.wustl.xipApplication.samples.XIPAppLazyRetrieveTest %1 %2 %3 %4
+java -agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=y edu.wustl.xipApplication.samples.XIPAppLazyRetrieveTest %1 %2 %3 %4
+PAUSE
 EXIT
