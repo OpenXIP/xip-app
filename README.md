@@ -14,7 +14,7 @@ create more complete XIP-based applications.
 The ultimate goals of the project include:
 
 * Provide a framework for creating
-  [DICOM Hosted Applications](http://medical.nema.org/Dicom/2011/11_19pu.pdf) in XIP&trad;.
+  [DICOM Hosted Applications](http://medical.nema.org/Dicom/2011/11_19pu.pdf) in XIP&trade;.
 * Provide a Java Swing GUI framework for incorporating XIP scene graphs, create with
   nodes and engines from the [XIP Libraries&trade;](https://github.com/OpenXIP/xip-libraries)
   into an application.
